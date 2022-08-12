@@ -20,6 +20,8 @@
 #include "FrSkySportSensorSp2uart.h"
 #include "FrSkySportSensorVario.h"
 #include "FrSkySportSensorAcc.h"
+#include "FrSkySportSensorAccExtended.h"
+#include "FrSkySportSensorBMP180.h"
 #include "FrSkySportSingleWireSerial.h"
 #include "FrSkySportTelemetry.h"
 #if !defined(TEENSY_HW)
@@ -35,7 +37,9 @@ FrSkySportSensorGps gps;                               // Create GPS sensor with
 FrSkySportSensorRpm rpm;                               // Create RPM sensor with default ID
 FrSkySportSensorSp2uart sp2uart;                       // Create SP2UART Type B sensor with default ID
 FrSkySportSensorVario vario;                           // Create Variometer sensor with default ID
-FrSkySportSensorAcc acc;                               // Create ACC sensor with default ID
+FrSkySportSensorAcc acc;
+FrSkySportSensorAccExtended accExt;
+FrSkySportSensorBMP180 bmp180;
 #ifdef POLLING_ENABLED
   #include "FrSkySportPollingDynamic.h"
   FrSkySportTelemetry telemetry(new FrSkySportPollingDynamic()); // Create telemetry object with dynamic (FrSky-like) polling
@@ -47,15 +51,18 @@ void setup()
 {
   // Configure the telemetry serial port and sensors (remember to use & to specify a pointer to sensor)
 #if defined(TEENSY_HW)
-  telemetry.begin(FrSkySportSingleWireSerial::SERIAL_3, &ass, &esc, &fcs, &flvss1, &flvss2, &gps, &rpm, &sp2uart, &vario, &acc);
+  telemetry.begin(FrSkySportSingleWireSerial::SERIAL_3, /*&ass, &esc, &fcs, &flvss1, &flvss2, &gps, &rpm, &sp2uart, &vario, &acc, &accExt, */&bmp180);
 #else
-  telemetry.begin(FrSkySportSingleWireSerial::SOFT_SERIAL_PIN_12, &ass, &esc, &fcs, &flvss1, &flvss2, &gps, &rpm, &sp2uart, &vario, &acc);
+  telemetry.begin(FrSkySportSingleWireSerial::SOFT_SERIAL_PIN_12, /*&ass, &esc, &fcs, &flvss1, &flvss2, &gps, &rpm, &sp2uart, &vario, &acc, &accExt, */&bmp180);
 #endif
+
+  bmp180.setup();
 }
 
 void loop()
 {
   acc.setData(-0.1,0.25,-9.81); 
+  accExt.setData(-0.1,0.25,-9.81); 
     
   // Set airspeed sensor (ASS) data
   ass.setData(76.5);  // Airspeed in km/h

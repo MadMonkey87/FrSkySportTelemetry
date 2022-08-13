@@ -9,6 +9,7 @@
 #define BMP180_VSI_DATA_ID 0x0110
 
 #define BMP180_DATA_PERIOD 500
+#define BMP180_PRESSURE_PRECISION 3 // 1-3 where 3 is the highes precision
 
 class FrSkySportSensorBMP180 : public FrSkySportSensor
 {
@@ -24,6 +25,7 @@ private:
   bool sensorInitialized;
   double temperature;
   double pressure;
+  double baseLinePressure;
 };
 
 #endif

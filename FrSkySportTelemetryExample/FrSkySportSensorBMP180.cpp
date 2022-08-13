@@ -16,20 +16,27 @@ void FrSkySportSensorBMP180::setup()
   if (sensorInitialized)
   {
     char waitingTime = bmp180sensor.startTemperature();
+    Serial.print(" - precision (1-3): ");
+    Serial.println(BMP180_PRESSURE_PRECISION);
     Serial.print(" - waiting for temperature sensor (ms): ");
     Serial.println((uint16_t)waitingTime);
     delay(waitingTime);
     bmp180sensor.getTemperature(temperature);
-    Serial.print(" - Temperature: ");
+    Serial.print(" - Temperature (C): ");
     Serial.println(temperature);
     
-    waitingTime = bmp180sensor.startPressure(3);
+    waitingTime = bmp180sensor.startPressure(BMP180_PRESSURE_PRECISION);
     Serial.print(" - waiting for pressure sensor (ms): ");
     Serial.println((uint16_t)waitingTime);
     delay(waitingTime);
     bmp180sensor.getPressure(pressure, temperature);
-    Serial.print(" - Pressure: ");
+    
+    Serial.print(" - Pressure (hPa): ");
     Serial.println(pressure);
+    
+    baseLinePressure = pressure;
+    Serial.println(" - set as base line pressure");
+    
 
     //initialize for the loop
     waitingTime = bmp180sensor.startTemperature();
@@ -55,9 +62,9 @@ uint16_t FrSkySportSensorBMP180::send(FrSkySportSingleWireSerial &serial, uint8_
       if (sensorInitialized && now > temperatureTime)
       {
         bmp180sensor.getTemperature(temperature);
-        Serial.print(temperature);
-        Serial.print("     ");
-        temperatureTime = now + max(bmp180sensor.startPressure(3), BMP180_DATA_PERIOD);
+        //Serial.print(temperature);
+        //Serial.print("     ");
+        temperatureTime = now + max(bmp180sensor.startPressure(BMP180_PRESSURE_PRECISION), BMP180_DATA_PERIOD);
         serial.sendData(dataId, temperature);
       }
       else
@@ -71,8 +78,9 @@ uint16_t FrSkySportSensorBMP180::send(FrSkySportSingleWireSerial &serial, uint8_
       if (sensorInitialized && now > pressureTime)
       {
         bmp180sensor.getPressure(pressure, temperature);
-        Serial.println(pressure);
+        //Serial.println(pressure);
         pressureTime = now + max(bmp180sensor.startTemperature(), BMP180_DATA_PERIOD);
+        Serial.println(bmp180sensor.altitude(pressure, baseLinePressure));
         serial.sendData(dataId, pressure);
       }
       else

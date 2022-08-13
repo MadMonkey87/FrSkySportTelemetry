@@ -22,8 +22,6 @@ void FrSkySportSensorBMP180::setup()
     bmp180sensor.getTemperature(temperature);
     Serial.print(" - Temperature: ");
     Serial.println(temperature);
-    waitingTime = bmp180sensor.startTemperature();
-    delay(waitingTime);
     
     waitingTime = bmp180sensor.startPressure(3);
     Serial.print(" - waiting for pressure sensor (ms): ");
@@ -32,8 +30,10 @@ void FrSkySportSensorBMP180::setup()
     bmp180sensor.getPressure(pressure, temperature);
     Serial.print(" - Pressure: ");
     Serial.println(pressure);
-    waitingTime = bmp180sensor.startPressure(3);
-    delay(waitingTime);
+
+    //initialize for the loop
+    waitingTime = bmp180sensor.startTemperature();
+    temperatureTime = millis() + waitingTime;
     
     Serial.println("done!\n");
   }
@@ -57,7 +57,7 @@ uint16_t FrSkySportSensorBMP180::send(FrSkySportSingleWireSerial &serial, uint8_
         bmp180sensor.getTemperature(temperature);
         Serial.print(temperature);
         Serial.print("     ");
-        temperatureTime = now + max(bmp180sensor.startTemperature(), BMP180_DATA_PERIOD);
+        temperatureTime = now + max(bmp180sensor.startPressure(3), BMP180_DATA_PERIOD);
         serial.sendData(dataId, temperature);
       }
       else
@@ -72,7 +72,7 @@ uint16_t FrSkySportSensorBMP180::send(FrSkySportSingleWireSerial &serial, uint8_
       {
         bmp180sensor.getPressure(pressure, temperature);
         Serial.println(pressure);
-        pressureTime = now + max(bmp180sensor.startPressure(3), BMP180_DATA_PERIOD);
+        pressureTime = now + max(bmp180sensor.startTemperature(), BMP180_DATA_PERIOD);
         serial.sendData(dataId, pressure);
       }
       else

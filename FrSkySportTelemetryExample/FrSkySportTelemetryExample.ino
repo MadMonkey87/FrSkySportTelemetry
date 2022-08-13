@@ -51,18 +51,18 @@ FrSkySportTelemetry telemetry;                                 // Create telemet
 
 void setup()
 {
-  Serial.println("Booting SmartPort multi sensor");
+  Serial.println("Booting SmartPort multi sensor\n");
   
   i2cScanner.scan();
   
-  Serial.print("Initialize Smart Port...");
+  Serial.print("Initialize Smart Port...\n");
   // Configure the telemetry serial port and sensors (remember to use & to specify a pointer to sensor)
 #if defined(TEENSY_HW)
   telemetry.begin(FrSkySportSingleWireSerial::SERIAL_3, /*&ass, &esc, &fcs, &flvss1, &flvss2, &gps, &rpm, &sp2uart, &vario, &acc, &accExt, */&bmp180);
 #else
   telemetry.begin(FrSkySportSingleWireSerial::SOFT_SERIAL_PIN_12, /*&ass, &esc, &fcs, &flvss1, &flvss2, &gps, &rpm, &sp2uart, &vario, &acc, &accExt, */&bmp180);
 #endif
-  Serial.println("done!");
+  Serial.println("done!\n");
 
   bmp180.setup();
 }

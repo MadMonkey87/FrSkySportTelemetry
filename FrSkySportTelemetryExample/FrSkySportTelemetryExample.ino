@@ -2,7 +2,7 @@
   FrSky S-Port Telemetry library example
   (c) Pawelsky 202000503
   Not for commercial use
-  
+
   Note that you need Teensy 3.x/4.0/LC, ESP8266, ATmega2560 (Mega) or ATmega328P based (e.g. Pro Mini, Nano, Uno) board and FrSkySportTelemetry library for this example to work
 */
 
@@ -10,6 +10,7 @@
 // Use only when there is no device in the S.Port chain (e.g. S.Port capable FrSky receiver) that normally polls the data.
 //#define POLLING_ENABLED
 
+#include "I2CScanner.h"
 #include "FrSkySportSensor.h"
 #include "FrSkySportSensorAss.h"
 #include "FrSkySportSensorEsc.h"
@@ -28,6 +29,7 @@
 #include "SoftwareSerial.h"
 #endif
 
+I2CScanner i2cScanner;
 FrSkySportSensorAss ass;                               // Create ASS sensor with default ID
 FrSkySportSensorEsc esc;                               // Create ESC sensor with default ID
 FrSkySportSensorFcs fcs;                               // Create FCS-40A sensor with default ID (use ID8 for FCS-150A)
@@ -41,29 +43,35 @@ FrSkySportSensorAcc acc;
 FrSkySportSensorAccExtended accExt;
 FrSkySportSensorBMP180 bmp180;
 #ifdef POLLING_ENABLED
-  #include "FrSkySportPollingDynamic.h"
-  FrSkySportTelemetry telemetry(new FrSkySportPollingDynamic()); // Create telemetry object with dynamic (FrSky-like) polling
+#include "FrSkySportPollingDynamic.h"
+FrSkySportTelemetry telemetry(new FrSkySportPollingDynamic()); // Create telemetry object with dynamic (FrSky-like) polling
 #else
-  FrSkySportTelemetry telemetry;                                 // Create telemetry object without polling
+FrSkySportTelemetry telemetry;                                 // Create telemetry object without polling
 #endif
 
 void setup()
 {
+  Serial.println("Booting SmartPort multi sensor");
+  
+  i2cScanner.scan();
+  
+  Serial.print("Initialize Smart Port...");
   // Configure the telemetry serial port and sensors (remember to use & to specify a pointer to sensor)
 #if defined(TEENSY_HW)
   telemetry.begin(FrSkySportSingleWireSerial::SERIAL_3, /*&ass, &esc, &fcs, &flvss1, &flvss2, &gps, &rpm, &sp2uart, &vario, &acc, &accExt, */&bmp180);
 #else
   telemetry.begin(FrSkySportSingleWireSerial::SOFT_SERIAL_PIN_12, /*&ass, &esc, &fcs, &flvss1, &flvss2, &gps, &rpm, &sp2uart, &vario, &acc, &accExt, */&bmp180);
 #endif
+  Serial.println("done!");
 
   bmp180.setup();
 }
 
 void loop()
 {
-  acc.setData(-0.1,0.25,-9.81); 
-  accExt.setData(-0.1,0.25,-9.81); 
-    
+  acc.setData(-0.1, 0.25, -9.81);
+  accExt.setData(-0.1, 0.25, -9.81);
+
   // Set airspeed sensor (ASS) data
   ass.setData(76.5);  // Airspeed in km/h
 
@@ -82,7 +90,7 @@ void loop()
   fcs.setData(25.3,   // Current consumption in amps
               12.6);  // Battery voltage in volts
 
-  // Set LiPo voltage sensor (FLVSS) data (we use two sensors to simulate 8S battery 
+  // Set LiPo voltage sensor (FLVSS) data (we use two sensors to simulate 8S battery
   // (set Voltage source to Cells in menu to use this data for battery voltage)
   flvss1.setData(4.07, 4.08, 4.09, 4.10, 4.11, 4.12);  // Cell voltages in volts (cells 1-6)
   flvss2.setData(4.13, 4.14);                          // Cell voltages in volts (cells 7-8)

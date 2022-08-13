@@ -62,7 +62,8 @@ void FrSkySportSensorBMP180::setup()
     
     //initialize for the loop
     waitingTime = bmp180sensor.startTemperature();
-    temperatureTime = millis() + waitingTime;
+    delay(waitingTime);
+    temperatureTime = millis();
     
     Serial.println("done!\n");
   }
@@ -101,13 +102,8 @@ uint16_t FrSkySportSensorBMP180::send(FrSkySportSingleWireSerial &serial, uint8_
         pressureTime = now + max(bmp180sensor.startTemperature(), BMP180_DATA_PERIOD);
        
         relativeAltitude = bmp180sensor.altitude(pressure, baseLinePressure);
-        
-        Serial.print(pressure);
-        Serial.print("   ");
-        Serial.print(baseLinePressure);
-        Serial.print("   ");
-        Serial.println(relativeAltitude);
-        
+        //Serial.println(relativeAltitude);
+        Serial.println((float)relativeAltitude/10, 1);
         serial.sendData(dataId, relativeAltitude);
       }
       else

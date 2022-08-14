@@ -56,10 +56,25 @@ void FrSkySportSensorBMP180::setup()
     Serial.println(pressure);
 
 
-    Serial.print(" - computing baseline pressure: ");
+calibrate();
+
+    Serial.println("done!\n");
+  }
+  else
+  {
+    Serial.println("failed!\n");
+  }
+}
+
+void FrSkySportSensorBMP180::calibrate()
+{
+  isCalibrating = true;
+char waitingTime;
+
+      Serial.print(" - computing baseline pressure: ");
     for (int i = 0; i < BMP180_BASELINE_SAMPLES; i++) {
       Serial.print(".");
-      waitingTime = bmp180sensor.startPressure(BMP180_PRESSURE_PRECISION);
+       waitingTime = bmp180sensor.startPressure(BMP180_PRESSURE_PRECISION);
       delay(waitingTime);
       bmp180sensor.getPressure(pressure, baseLineTemperature);
       baseLinePressure += pressure;
@@ -78,19 +93,14 @@ void FrSkySportSensorBMP180::setup()
     waitingTime = bmp180sensor.getPressure(pressure, baseLineTemperature);
     delay(waitingTime);
     pressureTime = millis();
-
-    Serial.println("done!\n");
-  }
-  else
-  {
-    Serial.println("failed!\n");
-  }
+    
+  isCalibrating = false;
 }
 
 uint16_t FrSkySportSensorBMP180::send(FrSkySportSingleWireSerial &serial, uint8_t id, uint32_t now)
 {
   uint16_t dataId = SENSOR_NO_DATA_ID;
-  if (sensorId == id)
+  if (sensorId == id && !isCalibrating)
   {
     switch (sensorDataIdx)
     {

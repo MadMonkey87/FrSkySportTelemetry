@@ -18,6 +18,7 @@ class FrSkySportSensorBMP180 : public FrSkySportSensor
 public:
   FrSkySportSensorBMP180(SensorId id = BMP180_DEFAULT_ID);
   void setup();
+  void calibrate();
   virtual uint16_t send(FrSkySportSingleWireSerial &serial, uint8_t id, uint32_t now);
   virtual uint16_t decodeData(uint8_t id, uint16_t appId, uint32_t data);
 
@@ -33,6 +34,7 @@ private:
   double relativeAltitude; // calculated from the baseLinePressure and the current preassure reading
   double baseLinePressure; // zero level pressure at bootup
   double baseLineTemperature;
+  bool isCalibrating;
 };
 
 #endif

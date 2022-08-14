@@ -1,7 +1,7 @@
 #ifndef _SBUS_Listener_H_
 #define _SBUS_Listener_H_
 
-#define SBUS_DATA_PERIOD 1000
+#define SBUS_DATA_PERIOD 250
 
 #include <stdint.h>
 

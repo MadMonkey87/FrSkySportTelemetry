@@ -95,7 +95,7 @@ uint16_t FrSkySportSensorBMP180::send(FrSkySportSingleWireSerial &serial, uint8_
     switch (sensorDataIdx)
     {
       case 0:
-        dataId = BMP180_ALT_DATA_ID;
+        dataId = BMP180_T_DATA_ID;
         if (sensorInitialized && now > temperatureTime)
         {
           bmp180sensor.getTemperature(temperature);
@@ -113,7 +113,7 @@ uint16_t FrSkySportSensorBMP180::send(FrSkySportSingleWireSerial &serial, uint8_
         }
         break;
       case 1:
-        dataId = BMP180_T_DATA_ID;
+        dataId = BMP180_ALT_DATA_ID;
         if (sensorInitialized && now > pressureTime)
         {
           double oldPressureReadingTime = pressureReadingTime;
@@ -129,7 +129,7 @@ uint16_t FrSkySportSensorBMP180::send(FrSkySportSingleWireSerial &serial, uint8_
           serial.sendData(dataId, relativeAltitude);
 
           //Serial.print((float)relativeAltitude, 1);
-          //Serial.println("m");
+          //Serial.print("m  ");
         }
         else
         {
@@ -145,7 +145,7 @@ uint16_t FrSkySportSensorBMP180::send(FrSkySportSingleWireSerial &serial, uint8_
           serial.sendData(dataId, verticalSpeed);
 
           //Serial.print((float)verticalSpeed, 1);
-          //Serial.println("m/s");
+          //Serial.println("m/s  ");
         }
         else
         {

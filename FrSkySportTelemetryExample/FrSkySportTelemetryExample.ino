@@ -6,7 +6,7 @@
   Note that you need Teensy 3.x/4.0/LC, ESP8266, ATmega2560 (Mega) or ATmega328P based (e.g. Pro Mini, Nano, Uno) board and FrSkySportTelemetry library for this example to work
 */
 
-//#define DEBUG
+// #define DEBUG
 
 // Uncomment the #define below to enable internal polling of data.
 // Use only when there is no device in the S.Port chain (e.g. S.Port capable FrSky receiver) that normally polls the data.
@@ -30,6 +30,7 @@
 #if !defined(TEENSY_HW)
 #include "SoftwareSerial.h"
 #endif
+#include <EEPROM.h>
 
 I2CScanner i2cScanner;
 FrSkySportSensorAss ass;                               // Create ASS sensor with default ID
@@ -57,13 +58,17 @@ FrSkySportTelemetry telemetry;                                 // Create telemet
 
 void setup()
 {
-  #if defined(DEBUG)
+  //#if defined(DEBUG)
     delay(3000);
-  #endif
+  //#endif
 
   Serial.print("Compile time: ");
   Serial.println(__DATE__ " " __TIME__);
-  Serial.println("Booting SmartPort multi sensor\n");
+  Serial.print("File: ");
+  Serial.println(__FILE__);
+  Serial.print("EEPROM size (bytes): ");
+  Serial.println(EEPROM.length());
+  
   #if defined(DEBUG)
     Serial.println("Debug: yes");
   #else
@@ -75,6 +80,8 @@ void setup()
     Serial.println("Running on teensy: no\n");
   #endif
   
+  Serial.println("\nBooting SmartPort multi sensor\n");
+
   i2cScanner.scan();
   
   Serial.print("Initialize Smart Port...\n");

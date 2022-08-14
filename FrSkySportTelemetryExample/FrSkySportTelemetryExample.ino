@@ -13,6 +13,7 @@
 //#define POLLING_ENABLED
 
 #include "I2CScanner.h"
+#include "SBusListener.h"
 #include "FrSkySportSensorBMP180.h"
 #include "FrSkySportSingleWireSerial.h"
 #include "FrSkySportTelemetry.h"
@@ -22,6 +23,7 @@
 #include <EEPROM.h>
 
 I2CScanner i2cScanner;
+SBusListener sbusListener;
 FrSkySportSensorBMP180 bmp180;
 #ifdef POLLING_ENABLED
 #include "FrSkySportPollingDynamic.h"
@@ -61,6 +63,7 @@ void setup()
   Serial.println("\nBooting SmartPort multi sensor\n");
 
   i2cScanner.scan();
+  sbusListener.setup();
   
   Serial.print("Initialize Smart Port...\n");
   // Configure the telemetry serial port and sensors (remember to use & to specify a pointer to sensor)
@@ -82,6 +85,8 @@ void loop()
     Serial.println(now-lastLoopTime);
     lastLoopTime = now;
   #endif
+
+  sbusListener.update();
 
 #ifdef POLLING_ENABLED
   // Set receiver data to be sent in case the polling is enabled (so no actual receiver is used)

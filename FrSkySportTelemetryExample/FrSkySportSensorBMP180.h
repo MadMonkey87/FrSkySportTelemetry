@@ -4,7 +4,7 @@
 #include "FrSkySportSensor.h"
 
 #define BMP180_DEFAULT_ID ID1
-#define BMP180_DATA_COUNT 2
+#define BMP180_DATA_COUNT 3 // temperature, relative altitude, vertical speed
 #define BMP180_ALT_DATA_ID 0x0100 // relative altitude to the start altitude in m
 #define BMP180_VSI_DATA_ID 0x0110 // vertical speed in m/s
 #define BMP180_T_DATA_ID 0x0400 // temperature in C
@@ -24,9 +24,12 @@ public:
 private:
   uint32_t pressureTime; // next time when the sensor is ready to provide a pressure reading
   uint32_t temperatureTime; // next time when the sensor is ready to provide a temperature reading
+  uint32_t verticalSpeedTime;
+  uint32_t pressureReadingTime; //time when the last preassure measurement was registered
   bool sensorInitialized; // true if setting up the sensor was successful
   double temperature; // reading from the sensor
   double pressure; // reading from the sensor
+  double verticalSpeed; // calculated
   double relativeAltitude; // calculated from the baseLinePressure and the current preassure reading
   double baseLinePressure; // zero level pressure at bootup
   double baseLineTemperature;

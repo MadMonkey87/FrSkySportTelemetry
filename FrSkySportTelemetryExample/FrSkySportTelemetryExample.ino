@@ -61,6 +61,8 @@ void setup()
     delay(3000);
   #endif
 
+  Serial.print("Compile time: ");
+  Serial.println(__DATE__ " " __TIME__);
   Serial.println("Booting SmartPort multi sensor\n");
   #if defined(DEBUG)
     Serial.println("Debug: yes");

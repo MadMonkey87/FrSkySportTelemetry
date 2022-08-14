@@ -6,6 +6,8 @@
   Note that you need Teensy 3.x/4.0/LC, ESP8266, ATmega2560 (Mega) or ATmega328P based (e.g. Pro Mini, Nano, Uno) board and FrSkySportTelemetry library for this example to work
 */
 
+//#define DEBUG
+
 // Uncomment the #define below to enable internal polling of data.
 // Use only when there is no device in the S.Port chain (e.g. S.Port capable FrSky receiver) that normally polls the data.
 //#define POLLING_ENABLED
@@ -49,9 +51,27 @@ FrSkySportTelemetry telemetry(new FrSkySportPollingDynamic()); // Create telemet
 FrSkySportTelemetry telemetry;                                 // Create telemetry object without polling
 #endif
 
+#if defined(DEBUG)
+  unsigned long lastLoopTime = millis();
+#endif
+
 void setup()
 {
+  #if defined(DEBUG)
+    delay(3000);
+  #endif
+
   Serial.println("Booting SmartPort multi sensor\n");
+  #if defined(DEBUG)
+    Serial.println("Debug: yes");
+  #else
+    Serial.println("Debug: no");
+  #endif
+  #if defined(TEENSY_HW)
+    Serial.println("Running on teensy: yes");
+  #else
+    Serial.println("Running on teensy: no\n");
+  #endif
   
   i2cScanner.scan();
   
@@ -69,6 +89,13 @@ void setup()
 
 void loop()
 {
+  #if defined(DEBUG)
+    unsigned long now = millis();
+    Serial.print("loop time (ms): ");
+    Serial.println(now-lastLoopTime);
+    lastLoopTime = now;
+  #endif
+
   acc.setData(-0.1, 0.25, -9.81);
   accExt.setData(-0.1, 0.25, -9.81);
 

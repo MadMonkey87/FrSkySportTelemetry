@@ -17,7 +17,7 @@
 	buy me a (root) beer someday.
 */
 
-#include <SFE_BMP180.h>
+#include "SFE_BMP180.h"
 #include <Wire.h>
 #include <stdio.h>
 #include <math.h>
@@ -26,7 +26,15 @@
 SFE_BMP180::SFE_BMP180()
 // Base library type
 {
+	twi = &Wire;
 }
+
+SFE_BMP180::SFE_BMP180(TwoWire *_twi)
+// Base library type
+{
+	twi = _twi;
+}
+
 
 
 char SFE_BMP180::begin()
@@ -36,7 +44,7 @@ char SFE_BMP180::begin()
 	
 	// Start up the Arduino's "wire" (I2C) library:
 	
-	Wire.begin();
+ 	twi->begin();
 
 	// The BMP180 includes factory calibration data stored on the device.
 	// Each device has different numbers, these must be retrieved and
@@ -177,18 +185,18 @@ char SFE_BMP180::readBytes(unsigned char *values, char length)
 // values: external array to hold data. Put starting register in values[0].
 // length: number of bytes to read
 {
-	char x;
+	uint8_t x;
 
-	Wire.beginTransmission(BMP180_ADDR);
-	Wire.write(values[0]);
-	_error = Wire.endTransmission();
+	twi->beginTransmission(BMP180_ADDR);
+	twi->write(values[0]);
+	_error = twi->endTransmission();
 	if (_error == 0)
 	{
-		Wire.requestFrom(BMP180_ADDR,length);
-		while(Wire.available() != length) ; // wait until bytes are ready
+		twi->requestFrom(BMP180_ADDR,length);
+		while(twi->available() != length) ; // wait until bytes are ready
 		for(x=0;x<length;x++)
 		{
-			values[x] = Wire.read();
+			values[x] = twi->read();
 		}
 		return(1);
 	}
@@ -201,11 +209,9 @@ char SFE_BMP180::writeBytes(unsigned char *values, char length)
 // values: external array of data to write. Put starting register in values[0].
 // length: number of bytes to write
 {
-	char x;
-	
-	Wire.beginTransmission(BMP180_ADDR);
-	Wire.write(values,length);
-	_error = Wire.endTransmission();
+	twi->beginTransmission(BMP180_ADDR);
+	twi->write(values,length);
+	_error = twi->endTransmission();
 	if (_error == 0)
 		return(1);
 	else
@@ -385,4 +391,3 @@ char SFE_BMP180::getError(void)
 {
 	return(_error);
 }
-

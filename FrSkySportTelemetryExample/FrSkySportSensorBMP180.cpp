@@ -1,5 +1,15 @@
 #include "FrSkySportSensorBMP180.h"
-#include <SFE_BMP180.h>
+
+#if defined(TEENSY_HW)
+#include "Teensy_BMP180.h"
+#else
+#include "SFE_BMP180.h"
+#endif
+
+
+#include "SFE_BMP180.h"
+
+
 #include <Wire.h>
 SFE_BMP180 bmp180sensor;
 
@@ -102,9 +112,13 @@ uint16_t FrSkySportSensorBMP180::send(FrSkySportSingleWireSerial &serial, uint8_
         pressureTime = now + max(bmp180sensor.startTemperature(), BMP180_DATA_PERIOD);
        
         relativeAltitude = bmp180sensor.altitude(pressure, baseLinePressure);
-        //Serial.println(relativeAltitude);
-        Serial.println((float)relativeAltitude/10, 1);
+
         serial.sendData(dataId, relativeAltitude);
+
+        //#if defined(DEBUG)
+          Serial.print((float)relativeAltitude/10, 1);
+          Serial.println("m");
+        //#endif
       }
       else
       {

@@ -74,6 +74,10 @@ void FrSkySportSensorBMP180::setup()
     waitingTime = bmp180sensor.startTemperature();
     delay(waitingTime);
     temperatureTime = millis();
+
+    waitingTime = bmp180sensor.getPressure(pressure, baseLineTemperature);
+    delay(waitingTime);
+    pressureTime = millis();
     
     Serial.println("done!\n");
   }
@@ -94,9 +98,13 @@ uint16_t FrSkySportSensorBMP180::send(FrSkySportSingleWireSerial &serial, uint8_
       dataId = BMP180_ALT_DATA_ID;
       if (sensorInitialized && now > temperatureTime)
       {
-        bmp180sensor.getTemperature(temperature); // todo: apply this to the baseline!
+        bmp180sensor.getTemperature(temperature);
+        baseLineTemperature = baseLineTemperature*0.75 + temperature* 0.25;
         temperatureTime = now + max(bmp180sensor.startPressure(BMP180_PRESSURE_PRECISION), BMP180_DATA_PERIOD);
         serial.sendData(dataId, temperature);
+
+        //Serial.print((float)baseLineTemperature, 1);
+        //Serial.print("C  ");
       }
       else
       {
@@ -105,7 +113,7 @@ uint16_t FrSkySportSensorBMP180::send(FrSkySportSingleWireSerial &serial, uint8_
       }
       break;
     case 1:
-      dataId = BMP180_VSI_DATA_ID;
+      dataId = BMP180_T_DATA_ID;
       if (sensorInitialized && now > pressureTime)
       {
         bmp180sensor.getPressure(pressure, baseLineTemperature);
@@ -115,10 +123,8 @@ uint16_t FrSkySportSensorBMP180::send(FrSkySportSingleWireSerial &serial, uint8_
 
         serial.sendData(dataId, relativeAltitude);
 
-        //#if defined(DEBUG)
-          Serial.print((float)relativeAltitude/10, 1);
-          Serial.println("m");
-        //#endif
+        //Serial.print((float)relativeAltitude, 1);
+        //Serial.println("m");
       }
       else
       {
@@ -127,7 +133,8 @@ uint16_t FrSkySportSensorBMP180::send(FrSkySportSingleWireSerial &serial, uint8_
       }
       break;
     }
-    sensorDataIdx++;
+
+    sensorDataIdx++;    
     if (sensorDataIdx >= BMP180_DATA_COUNT)
       sensorDataIdx = 0;
   }

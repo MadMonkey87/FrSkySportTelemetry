@@ -6,9 +6,7 @@
 #include "SFE_BMP180.h"
 #endif
 
-
 #include "SFE_BMP180.h"
-
 
 #include <Wire.h>
 SFE_BMP180 bmp180sensor;
@@ -35,7 +33,8 @@ void FrSkySportSensorBMP180::setup()
     Serial.println(temperature);
 
     Serial.print(" - computing baseline temperature: ");
-    for (int i = 0; i < BMP180_BASELINE_SAMPLES; i++) {
+    for (int i = 0; i < BMP180_BASELINE_SAMPLES; i++)
+    {
       Serial.print(".");
       waitingTime = bmp180sensor.startTemperature();
       delay(waitingTime);
@@ -55,8 +54,7 @@ void FrSkySportSensorBMP180::setup()
     Serial.print(" - Pressure (hPa): ");
     Serial.println(pressure);
 
-
-calibrate();
+    calibrate();
 
     Serial.println("done!\n");
   }
@@ -69,31 +67,30 @@ calibrate();
 void FrSkySportSensorBMP180::calibrate()
 {
   isCalibrating = true;
-char waitingTime;
+  char waitingTime;
 
-      Serial.print(" - computing baseline pressure: ");
-    for (int i = 0; i < BMP180_BASELINE_SAMPLES; i++) {
-      Serial.print(".");
-       waitingTime = bmp180sensor.startPressure(BMP180_PRESSURE_PRECISION);
-      delay(waitingTime);
-      bmp180sensor.getPressure(pressure, baseLineTemperature);
-      baseLinePressure += pressure;
-    }
-    baseLinePressure = baseLinePressure / BMP180_BASELINE_SAMPLES;
-    Serial.print("\n - set as base line pressure: ");
-    Serial.println(baseLinePressure);
-
-
-
-    //initialize for the loop
-    waitingTime = bmp180sensor.startTemperature();
+  Serial.print(" - computing baseline pressure: ");
+  for (int i = 0; i < BMP180_BASELINE_SAMPLES; i++)
+  {
+    Serial.print(".");
+    waitingTime = bmp180sensor.startPressure(BMP180_PRESSURE_PRECISION);
     delay(waitingTime);
-    temperatureTime = millis();
+    bmp180sensor.getPressure(pressure, baseLineTemperature);
+    baseLinePressure += pressure;
+  }
+  baseLinePressure = baseLinePressure / BMP180_BASELINE_SAMPLES;
+  Serial.print("\n - set as base line pressure: ");
+  Serial.println(baseLinePressure);
 
-    waitingTime = bmp180sensor.getPressure(pressure, baseLineTemperature);
-    delay(waitingTime);
-    pressureTime = millis();
-    
+  // initialize for the loop
+  waitingTime = bmp180sensor.startTemperature();
+  delay(waitingTime);
+  temperatureTime = millis();
+
+  waitingTime = bmp180sensor.getPressure(pressure, baseLineTemperature);
+  delay(waitingTime);
+  pressureTime = millis();
+
   isCalibrating = false;
 }
 
@@ -104,65 +101,65 @@ uint16_t FrSkySportSensorBMP180::send(FrSkySportSingleWireSerial &serial, uint8_
   {
     switch (sensorDataIdx)
     {
-      case 0:
-        dataId = BMP180_T_DATA_ID;
-        if (sensorInitialized && now > temperatureTime)
-        {
-          bmp180sensor.getTemperature(temperature);
-          baseLineTemperature = baseLineTemperature * 0.75 + temperature * 0.25;
-          temperatureTime = now + max(bmp180sensor.startPressure(BMP180_PRESSURE_PRECISION), BMP180_DATA_PERIOD);
-          serial.sendData(dataId, temperature);
+    case 0:
+      dataId = BMP180_T_DATA_ID;
+      if (sensorInitialized && now > temperatureTime)
+      {
+        bmp180sensor.getTemperature(temperature);
+        baseLineTemperature = baseLineTemperature * 0.75 + temperature * 0.25;
+        temperatureTime = now + max(bmp180sensor.startPressure(BMP180_PRESSURE_PRECISION), BMP180_DATA_PERIOD);
+        serial.sendData(dataId, temperature);
 
-          //Serial.print((float)baseLineTemperature, 1);
-          //Serial.print("C  ");
-        }
-        else
-        {
-          serial.sendEmpty(dataId);
-          dataId = SENSOR_EMPTY_DATA_ID;
-        }
-        break;
-      case 1:
-        dataId = BMP180_ALT_DATA_ID;
-        if (sensorInitialized && now > pressureTime)
-        {
-          double oldPressureReadingTime = pressureReadingTime;
-          
-          bmp180sensor.getPressure(pressure, baseLineTemperature);
-          pressureReadingTime = now;
-          pressureTime = now + max(bmp180sensor.startTemperature(), BMP180_DATA_PERIOD);
+        // Serial.print((float)baseLineTemperature, 1);
+        // Serial.print("C  ");
+      }
+      else
+      {
+        serial.sendEmpty(dataId);
+        dataId = SENSOR_EMPTY_DATA_ID;
+      }
+      break;
+    case 1:
+      dataId = BMP180_ALT_DATA_ID;
+      if (sensorInitialized && now > pressureTime)
+      {
+        double oldPressureReadingTime = pressureReadingTime;
 
-          double oldRelativeAltitude = relativeAltitude;
-          relativeAltitude = bmp180sensor.altitude(pressure, baseLinePressure);
-          verticalSpeed = (relativeAltitude - oldRelativeAltitude) / (now-oldPressureReadingTime) * 1000;
+        bmp180sensor.getPressure(pressure, baseLineTemperature);
+        pressureReadingTime = now;
+        pressureTime = now + max(bmp180sensor.startTemperature(), BMP180_DATA_PERIOD);
 
-          serial.sendData(dataId, relativeAltitude);
+        double oldRelativeAltitude = relativeAltitude;
+        relativeAltitude = bmp180sensor.altitude(pressure, baseLinePressure);
+        verticalSpeed = (relativeAltitude - oldRelativeAltitude) / (now - oldPressureReadingTime) * 1000;
 
-          //Serial.print((float)relativeAltitude, 1);
-          //Serial.print("m  ");
-        }
-        else
-        {
-          serial.sendEmpty(dataId);
-          dataId = SENSOR_EMPTY_DATA_ID;
-        }
-        break;
-      case 2:
-        dataId = BMP180_VSI_DATA_ID;
-        if (sensorInitialized && now > verticalSpeedTime)
-        {
-          verticalSpeedTime = now + BMP180_DATA_PERIOD;
-          serial.sendData(dataId, verticalSpeed);
+        serial.sendData(dataId, relativeAltitude);
 
-          //Serial.print((float)verticalSpeed, 1);
-          //Serial.println("m/s  ");
-        }
-        else
-        {
-          serial.sendEmpty(dataId);
-          dataId = SENSOR_EMPTY_DATA_ID;
-        }
-        break;
+        // Serial.print((float)relativeAltitude, 1);
+        // Serial.print("m  ");
+      }
+      else
+      {
+        serial.sendEmpty(dataId);
+        dataId = SENSOR_EMPTY_DATA_ID;
+      }
+      break;
+    case 2:
+      dataId = BMP180_VSI_DATA_ID;
+      if (sensorInitialized && now > verticalSpeedTime)
+      {
+        verticalSpeedTime = now + BMP180_DATA_PERIOD;
+        serial.sendData(dataId, verticalSpeed);
+
+        // Serial.print((float)verticalSpeed, 1);
+        // Serial.println("m/s  ");
+      }
+      else
+      {
+        serial.sendEmpty(dataId);
+        dataId = SENSOR_EMPTY_DATA_ID;
+      }
+      break;
     }
 
     sensorDataIdx++;

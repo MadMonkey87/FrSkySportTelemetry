@@ -29,17 +29,17 @@ FrSkySportSensorBMP180 bmp180;
 #include "FrSkySportPollingDynamic.h"
 FrSkySportTelemetry telemetry(new FrSkySportPollingDynamic()); // Create telemetry object with dynamic (FrSky-like) polling
 #else
-FrSkySportTelemetry telemetry;                                 // Create telemetry object without polling
+FrSkySportTelemetry telemetry; // Create telemetry object without polling
 #endif
 
 #if defined(DEBUG)
-  unsigned long lastLoopTime = millis();
+unsigned long lastLoopTime = millis();
 #endif
 
 void setup()
 {
   //#if defined(DEBUG)
-    delay(3000);
+  delay(3000);
   //#endif
 
   Serial.print("Compile time: ");
@@ -48,23 +48,23 @@ void setup()
   Serial.println(__FILE__);
   Serial.print("EEPROM size (bytes): ");
   Serial.println(EEPROM.length());
-  
-  #if defined(DEBUG)
-    Serial.println("Debug: yes");
-  #else
-    Serial.println("Debug: no");
-  #endif
-  #if defined(TEENSY_HW)
-    Serial.println("Running on teensy: yes");
-  #else
-    Serial.println("Running on teensy: no\n");
-  #endif
-  
+
+#if defined(DEBUG)
+  Serial.println("Debug: yes");
+#else
+  Serial.println("Debug: no");
+#endif
+#if defined(TEENSY_HW)
+  Serial.println("Running on teensy: yes");
+#else
+  Serial.println("Running on teensy: no\n");
+#endif
+
   Serial.println("\nBooting SmartPort multi sensor\n");
 
   i2cScanner.scan();
   sbusListener.setup();
-  
+
   Serial.print("Initialize Smart Port...\n");
   // Configure the telemetry serial port and sensors (remember to use & to specify a pointer to sensor)
 #if defined(TEENSY_HW)
@@ -79,19 +79,19 @@ void setup()
 
 void loop()
 {
-  #if defined(DEBUG)
-    unsigned long now = millis();
-    Serial.print("loop time (ms): ");
-    Serial.println(now-lastLoopTime);
-    lastLoopTime = now;
-  #endif
+#if defined(DEBUG)
+  unsigned long now = millis();
+  Serial.print("loop time (ms): ");
+  Serial.println(now - lastLoopTime);
+  lastLoopTime = now;
+#endif
 
   sbusListener.update();
 
 #ifdef POLLING_ENABLED
   // Set receiver data to be sent in case the polling is enabled (so no actual receiver is used)
-  telemetry.setData(90,    // RSSI value (0-100, 0 = no telemetry, 100 = full signal)
-                    4.9);  // RxBatt (voltage supplied to the receiver) value in volts (0.0-13.2)
+  telemetry.setData(90,   // RSSI value (0-100, 0 = no telemetry, 100 = full signal)
+                    4.9); // RxBatt (voltage supplied to the receiver) value in volts (0.0-13.2)
 #endif
 
   // Send the telemetry data, note that the data will only be sent for sensors

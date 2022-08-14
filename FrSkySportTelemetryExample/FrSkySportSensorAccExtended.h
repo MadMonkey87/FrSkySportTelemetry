@@ -13,8 +13,8 @@
 
 class FrSkySportSensorAccExtended : public FrSkySportSensorAcc
 {
-  public:
-    FrSkySportSensorAccExtended(SensorId id = ACCEXT_DEFAULT_ID);
+public:
+  FrSkySportSensorAccExtended(SensorId id = ACCEXT_DEFAULT_ID);
 };
 
 #endif

@@ -4,6 +4,6 @@
   Not for commercial use
 */
 
-#include "FrSkySportSensorAccExtended.h" 
+#include "FrSkySportSensorAccExtended.h"
 
-FrSkySportSensorAccExtended::FrSkySportSensorAccExtended(SensorId id) : FrSkySportSensorAcc(id) { }
+FrSkySportSensorAccExtended::FrSkySportSensorAccExtended(SensorId id) : FrSkySportSensorAcc(id) {}

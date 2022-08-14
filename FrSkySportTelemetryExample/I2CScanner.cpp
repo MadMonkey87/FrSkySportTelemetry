@@ -32,7 +32,7 @@ void I2CScanner::scan()
             if (address < 16)
                 Serial.print("0");
             Serial.println(address, HEX);
-            
+
             nDevices++;
         }
         else if (error == 4)

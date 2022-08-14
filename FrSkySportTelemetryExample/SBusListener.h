@@ -12,7 +12,7 @@ public:
   void setup();
   void update();
 
- private:
+private:
   uint32_t sbusTime;
 };
 

@@ -21,28 +21,28 @@
 
 class FrSkySportSensorAcc : public FrSkySportSensor
 {
-  public:
-    FrSkySportSensorAcc(SensorId id = ACC_DEFAULT_ID);
-    void setData(float x, float y, float z);
-    void setDataX(float x);
-    void setDataY(float y);
-    void setDataZ(float z);
-    virtual uint16_t send(FrSkySportSingleWireSerial& serial, uint8_t id, uint32_t now);
-    virtual uint16_t decodeData(uint8_t id, uint16_t appId, uint32_t data);
-    float getAccX();
-    float getAccY();
-    float getAccZ();
+public:
+  FrSkySportSensorAcc(SensorId id = ACC_DEFAULT_ID);
+  void setData(float x, float y, float z);
+  void setDataX(float x);
+  void setDataY(float y);
+  void setDataZ(float z);
+  virtual uint16_t send(FrSkySportSingleWireSerial &serial, uint8_t id, uint32_t now);
+  virtual uint16_t decodeData(uint8_t id, uint16_t appId, uint32_t data);
+  float getAccX();
+  float getAccY();
+  float getAccZ();
 
-  private:
-    uint32_t xData;
-    uint32_t yData;
-    uint32_t zData;
-    uint32_t accXTime;
-    uint32_t accYTime;
-    uint32_t accZTime;
-    float x;
-    float y;
-    float z;
+private:
+  uint32_t xData;
+  uint32_t yData;
+  uint32_t zData;
+  uint32_t accXTime;
+  uint32_t accYTime;
+  uint32_t accZTime;
+  float x;
+  float y;
+  float z;
 };
 
 #endif

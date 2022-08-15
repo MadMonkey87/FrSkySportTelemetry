@@ -39,9 +39,7 @@ unsigned long lastLoopTime = millis();
 
 void setup()
 {
-  //#if defined(DEBUG)
   delay(1000);
-  //#endif
 
   Serial.print("Compile time: ");
   Serial.println(__DATE__ " " __TIME__);

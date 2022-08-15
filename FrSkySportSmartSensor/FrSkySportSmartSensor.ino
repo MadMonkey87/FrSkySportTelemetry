@@ -15,16 +15,17 @@
 #include "I2CScanner.h"
 #include "SBusListener.h"
 #include "FrSkySportSensorBMP180.h"
+#include "FrSkySportSensorBMP280.h"
 #include "FrSkySportSingleWireSerial.h"
 #include "FrSkySportTelemetry.h"
 #if !defined(TEENSY_HW)
 #include "SoftwareSerial.h"
 #endif
-#include <EEPROM.h>
 
 I2CScanner i2cScanner;
 SBusListener sbusListener;
 FrSkySportSensorBMP180 bmp180;
+FrSkySportSensorBMP280 bmp280;
 #ifdef POLLING_ENABLED
 #include "FrSkySportPollingDynamic.h"
 FrSkySportTelemetry telemetry(new FrSkySportPollingDynamic()); // Create telemetry object with dynamic (FrSky-like) polling
@@ -39,15 +40,13 @@ unsigned long lastLoopTime = millis();
 void setup()
 {
   //#if defined(DEBUG)
-  delay(3000);
+  delay(1000);
   //#endif
 
   Serial.print("Compile time: ");
   Serial.println(__DATE__ " " __TIME__);
   Serial.print("File: ");
   Serial.println(__FILE__);
-  Serial.print("EEPROM size (bytes): ");
-  Serial.println(EEPROM.length());
 
 #if defined(DEBUG)
   Serial.println("Debug: yes");
@@ -68,13 +67,14 @@ void setup()
   Serial.print("Initialize Smart Port...\n");
   // Configure the telemetry serial port and sensors (remember to use & to specify a pointer to sensor)
 #if defined(TEENSY_HW)
-  telemetry.begin(FrSkySportSingleWireSerial::SERIAL_3, &bmp180);
+  telemetry.begin(FrSkySportSingleWireSerial::SERIAL_3, &bmp180, &bmp280);
 #else
-  telemetry.begin(FrSkySportSingleWireSerial::SOFT_SERIAL_PIN_12, &bmp180);
+  telemetry.begin(FrSkySportSingleWireSerial::SOFT_SERIAL_PIN_12, &bmp180, &bmp280);
 #endif
   Serial.println("done!\n");
 
   bmp180.setup();
+  bmp280.setup();
 }
 
 void loop()

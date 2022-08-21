@@ -12,7 +12,21 @@ SBusListener::SBusListener()
 
 void SBusListener::setup()
 {
+  Serial.println("Initialize SBus...");
   sbus_rx.Begin();
+  Serial.print(" - channels: ");
+
+  for(int i=0;i<100;i++){
+    if (sbus_rx.Read()){
+      Serial.println(bfs::SbusRx::NUM_CH());
+      break;
+    } else if (i==99){
+      Serial.println("not connected!");
+    }
+    delay(10);
+  }
+  
+  Serial.println("done!\n");
 }
 
 void SBusListener::update()
@@ -26,8 +40,8 @@ void SBusListener::update()
 
       for (int8_t i = 0; i < bfs::SbusRx::NUM_CH(); i++)
       {
-        // Serial.print(sbus_data[i]);
-        // Serial.print("\t");
+         // Serial.print(sbus_data[i]);
+         // Serial.print("\t");
       }
       // Serial.print(sbus_rx.lost_frame());
       // Serial.print("\t");

@@ -92,6 +92,8 @@ void loop()
 
   sbusListener.update();
 
+  mpu6050.loop();
+
 #ifdef POLLING_ENABLED
   // Set receiver data to be sent in case the polling is enabled (so no actual receiver is used)
   telemetry.setData(90,   // RSSI value (0-100, 0 = no telemetry, 100 = full signal)

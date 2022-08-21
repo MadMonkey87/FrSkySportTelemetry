@@ -91,6 +91,10 @@ void FrSkySportSensorMPU6050::setup()
     double roll  = GetRoll(acceleration);
     double pitch = GetPitch(acceleration);
 
+    //assumed that the initial position is the neutral position
+    rollOffset = -roll;
+    pitchOffset = -pitch;
+
     kalmanX.setAngle(roll);
     kalmanY.setAngle(pitch);
     gyroXangle = roll;
@@ -182,10 +186,11 @@ void FrSkySportSensorMPU6050::loop()
     gyroYangle = kalAngleY;
   }
 
-  /*Serial.print("AccRoll:"); Serial.print(roll); Serial.print("\t");
+  Serial.print("AccRoll:"); Serial.print(roll); Serial.print("\t");
   Serial.print("GyroRoll:"); Serial.print(gyroXangle); Serial.print("\t");
   Serial.print("ComputedRoll:"); Serial.print(compAngleX); Serial.print("\t");
   Serial.print("KalmanRoll:"); Serial.print(kalAngleX); Serial.print("\t");
+  Serial.print("final roll:"); Serial.print(kalAngleX + rollOffset); Serial.print("\t");
 
   Serial.println("\t");
 
@@ -193,13 +198,15 @@ void FrSkySportSensorMPU6050::loop()
   Serial.print("Gyro Y Angle:"); Serial.print(gyroYangle); Serial.print("\t");
   Serial.print("Computed Y Angle"); Serial.print(compAngleY); Serial.print("\t");
   Serial.print("Kalman Y Angle:"); Serial.print(kalAngleY); Serial.print("\t");
+  Serial.print("final pitch:"); Serial.print(kalAngleY + pitchOffset); Serial.print("\t");
+
   Serial.println("\t");
 
   Serial.print(GetGForces(acceleration));
   Serial.print("g");
 
   Serial.println("\t");
-  Serial.println("\t");*/
+  Serial.println("\t");
 
   delay(100);
 }

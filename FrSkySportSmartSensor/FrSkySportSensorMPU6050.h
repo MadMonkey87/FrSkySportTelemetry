@@ -31,6 +31,7 @@ public:
   uint32_t accelerationTime;    // next time when the sensor is ready to provide a accelearation reading
   bool sensorInitialized;       // true if setting up the sensor was successful
 
+  double pitchOffset, rollOffset;
   double gyroXangle, gyroYangle; // Angle calculate using the gyro only
   double compAngleX, compAngleY; // Calculated angle using a complementary filter
   double kalAngleX, kalAngleY; // Calculated angle using a Kalman filter

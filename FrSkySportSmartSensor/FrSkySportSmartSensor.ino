@@ -12,7 +12,9 @@
 // Use only when there is no device in the S.Port chain (e.g. S.Port capable FrSky receiver) that normally polls the data.
 //#define POLLING_ENABLED
 
+#if defined(DEBUG)
 #include "I2CScanner.h"
+#endif
 #include "SBusListener.h"
 #include "FrSkySportSensorBMP180.h"
 //#include "FrSkySportSensorBMP280.h"
@@ -24,7 +26,9 @@
 #include "SoftwareSerial.h"
 #endif
 
+#if defined(DEBUG)
 I2CScanner i2cScanner;
+#endif
 SBusListener sbusListener;
 FrSkySportSensorBMP180 bmp180;
 //FrSkySportSensorBMP280 bmp280;
@@ -46,7 +50,7 @@ void setup()
   delay(1000);
 
   Serial.print("Compile time: ");
-  Serial.println(__DATE__ " " __TIME__);
+  Serial.println(__TIMESTAMP__);
   Serial.print("File: ");
   Serial.println(__FILE__);
 
@@ -63,7 +67,9 @@ void setup()
 
   Serial.println("\nBooting SmartPort multi sensor\n");
 
+#if defined(DEBUG)
   i2cScanner.scan();
+#endif
   sbusListener.setup();
 
   Serial.print("Initialize Smart Port...\n");

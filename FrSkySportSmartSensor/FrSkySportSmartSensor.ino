@@ -15,8 +15,8 @@
 #include "I2CScanner.h"
 #include "SBusListener.h"
 #include "FrSkySportSensorBMP180.h"
-#include "FrSkySportSensorBMP280.h"
-#include "FrSkySportSensorLSM303.h"
+//#include "FrSkySportSensorBMP280.h"
+//#include "FrSkySportSensorLSM303.h"
 #include "FrSkySportSensorMPU6050.h"
 #include "FrSkySportSingleWireSerial.h"
 #include "FrSkySportTelemetry.h"
@@ -27,8 +27,8 @@
 I2CScanner i2cScanner;
 SBusListener sbusListener;
 FrSkySportSensorBMP180 bmp180;
-FrSkySportSensorBMP280 bmp280;
-FrSkySportSensorLSM303 lsm303;
+//FrSkySportSensorBMP280 bmp280;
+//FrSkySportSensorLSM303 lsm303;
 FrSkySportSensorMPU6050 mpu6050;
 #ifdef POLLING_ENABLED
 #include "FrSkySportPollingDynamic.h"
@@ -69,15 +69,15 @@ void setup()
   Serial.print("Initialize Smart Port...\n");
   // Configure the telemetry serial port and sensors (remember to use & to specify a pointer to sensor)
 #if defined(TEENSY_HW)
-  telemetry.begin(FrSkySportSingleWireSerial::SERIAL_3, &bmp180, &bmp280, &lsm303, &mpu6050);
+  telemetry.begin(FrSkySportSingleWireSerial::SERIAL_3, &bmp180,/* &bmp280, &lsm303,*/ &mpu6050);
 #else
-  telemetry.begin(FrSkySportSingleWireSerial::SOFT_SERIAL_PIN_12, &bmp180, &bmp280, &lsm303, &mpu6050);
+  telemetry.begin(FrSkySportSingleWireSerial::SOFT_SERIAL_PIN_12, &bmp180, /*&bmp280, &lsm303, */&mpu6050);
 #endif
   Serial.println("done!\n");
 
   bmp180.setup();
-  bmp280.setup();
-  lsm303.setup();
+  //bmp280.setup();
+  //lsm303.setup();
   mpu6050.setup();
 }
 
@@ -91,8 +91,6 @@ void loop()
 #endif
 
   sbusListener.update();
-
-  mpu6050.loop();
 
 #ifdef POLLING_ENABLED
   // Set receiver data to be sent in case the polling is enabled (so no actual receiver is used)

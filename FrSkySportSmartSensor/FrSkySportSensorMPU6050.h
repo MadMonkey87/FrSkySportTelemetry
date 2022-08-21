@@ -3,6 +3,7 @@
 
 #include "FrSkySportSensor.h"
 #include <Kalman.h>
+#include <Adafruit_MPU6050.h>
 
 #define MPU6050_DEFAULT_ID ID23
 #define MPU6050_DATA_COUNT 1
@@ -22,17 +23,20 @@ public:
   virtual uint16_t send(FrSkySportSingleWireSerial &serial, uint8_t id, uint32_t now);
   virtual uint16_t decodeData(uint8_t id, uint16_t appId, uint32_t data);
  private:
+  double GetRoll(sensors_event_t event);
+  double GetPitch(sensors_event_t event);
+
+ 
   uint32_t accelerationTime;    // next time when the sensor is ready to provide a accelearation reading
   bool sensorInitialized;       // true if setting up the sensor was successful
 
-  double accX, accY, accZ;
-  double gyroX, gyroY, gyroZ;
+
   double gyroXangle, gyroYangle; // Angle calculate using the gyro only
   double compAngleX, compAngleY; // Calculated angle using a complementary filter
   double kalAngleX, kalAngleY; // Calculated angle using a Kalman filter
-  Kalman kalmanX; // Create the Kalman instances
+  Kalman kalmanX;
   Kalman kalmanY;
-  uint32_t timer;
+  uint32_t timer; //used to determine the exact dt passed between sensor events
 };
 
 #endif

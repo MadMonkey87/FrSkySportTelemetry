@@ -25,11 +25,11 @@ public:
  private:
   double GetRoll(sensors_event_t event);
   double GetPitch(sensors_event_t event);
+  double GetGForces(sensors_event_t event);
 
  
   uint32_t accelerationTime;    // next time when the sensor is ready to provide a accelearation reading
   bool sensorInitialized;       // true if setting up the sensor was successful
-
 
   double gyroXangle, gyroYangle; // Angle calculate using the gyro only
   double compAngleX, compAngleY; // Calculated angle using a complementary filter

@@ -14,18 +14,29 @@ void SBusListener::setup()
 {
   Serial.println("Initialize SBus...");
   sbus_rx.Begin();
-  Serial.print(" - channels: ");
 
-  for(int i=0;i<100;i++){
-    if (sbus_rx.Read()){
-      Serial.println(bfs::SbusRx::NUM_CH());
+  for (int i = 0; i < 100; i++) {
+    if (sbus_rx.Read()) {
+      sbus_data = sbus_rx.ch();
+      Serial.print(" - channels: "); Serial.println(bfs::SbusRx::NUM_CH());
+      for (int8_t i = 0; i < bfs::SbusRx::NUM_CH(); i++)
+      {
+        Serial.print(" - channel ");
+        Serial.print(i + 1);
+        Serial.print(": ");
+        Serial.println(sbus_data[i]);
+      }
+      Serial.print(" - lost-frame: ");
+      Serial.println(sbus_rx.lost_frame());
+      Serial.print(" - failsafe: ");
+      Serial.println(sbus_rx.failsafe());
       break;
-    } else if (i==99){
-      Serial.println("not connected!");
+    } else if (i == 99) {
+      Serial.println(" - not connected!");
     }
     delay(10);
   }
-  
+
   Serial.println("done!\n");
 }
 
@@ -38,14 +49,14 @@ void SBusListener::update()
     {
       sbus_data = sbus_rx.ch();
 
-      for (int8_t i = 0; i < bfs::SbusRx::NUM_CH(); i++)
-      {
-         // Serial.print(sbus_data[i]);
-         // Serial.print("\t");
-      }
-      // Serial.print(sbus_rx.lost_frame());
-      // Serial.print("\t");
-      // Serial.println(sbus_rx.failsafe());
+      /*for (int8_t i = 0; i < bfs::SbusRx::NUM_CH(); i++)
+        {
+        Serial.print(sbus_data[i]);
+        Serial.print("\t");
+        }
+        Serial.print(sbus_rx.lost_frame());
+        Serial.print("\t");
+        Serial.println(sbus_rx.failsafe());*/
 
       sbusTime = now + SBUS_DATA_PERIOD;
     }

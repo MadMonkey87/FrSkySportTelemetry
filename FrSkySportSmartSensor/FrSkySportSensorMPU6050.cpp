@@ -181,21 +181,26 @@ void FrSkySportSensorMPU6050::loop()
   if (gyroYangle < -180 || gyroYangle > 180) {
     gyroYangle = kalAngleY;
   }
-  
+
   /*Serial.print("AccRoll:"); Serial.print(roll); Serial.print("\t");
   Serial.print("GyroRoll:"); Serial.print(gyroXangle); Serial.print("\t");
   Serial.print("ComputedRoll:"); Serial.print(compAngleX); Serial.print("\t");
   Serial.print("KalmanRoll:"); Serial.print(kalAngleX); Serial.print("\t");
 
-  Serial.println("\t");*/
+  Serial.println("\t");
 
-  /*Serial.print("Pitch:"); Serial.print(pitch); Serial.print("\t");
+  Serial.print("Pitch:"); Serial.print(pitch); Serial.print("\t");
   Serial.print("Gyro Y Angle:"); Serial.print(gyroYangle); Serial.print("\t");
   Serial.print("Computed Y Angle"); Serial.print(compAngleY); Serial.print("\t");
   Serial.print("Kalman Y Angle:"); Serial.print(kalAngleY); Serial.print("\t");
   Serial.println("\t");
+
+  Serial.print(GetGForces(acceleration));
+  Serial.print("g");
+
+  Serial.println("\t");
   Serial.println("\t");*/
-  
+
   delay(100);
 }
 
@@ -251,4 +256,11 @@ double FrSkySportSensorMPU6050::GetPitch(sensors_event_t event) {
 #else // Eq. 28 and 29
   return atan2(-event.acceleration.x, event.acceleration.z) * RAD_TO_DEG;
 #endif
+}
+
+double FrSkySportSensorMPU6050::GetGForces(sensors_event_t event) {
+  double x = event.acceleration.x;// / accelerationFullScaleRange;
+  double y = event.acceleration.y;// / accelerationFullScaleRange;
+  double z = event.acceleration.z;// / accelerationFullScaleRange;
+  return sqrt(x * x + y * y + z * z) / 9.81;
 }

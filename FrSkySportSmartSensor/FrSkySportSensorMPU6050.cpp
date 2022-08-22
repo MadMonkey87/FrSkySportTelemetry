@@ -197,28 +197,26 @@ void FrSkySportSensorMPU6050::readAndCalculate()
   }
 
   /*Serial.print("AccRoll:"); Serial.print(roll); Serial.print("\t");
-    Serial.print("GyroRoll:"); Serial.print(gyroXangle); Serial.print("\t");
-    Serial.print("ComputedRoll:"); Serial.print(compAngleX); Serial.print("\t");
-    Serial.print("KalmanRoll:"); Serial.print(kalAngleX); Serial.print("\t");
-    Serial.print("final roll:"); Serial.print(kalAngleX + rollOffset); Serial.print("\t");
+  Serial.print("GyroRoll:"); Serial.print(gyroXangle); Serial.print("\t");
+  Serial.print("ComputedRoll:"); Serial.print(compAngleX); Serial.print("\t");
+  Serial.print("KalmanRoll:"); Serial.print(kalAngleX); Serial.print("\t");
+  Serial.print("final roll:"); Serial.print(kalAngleX + rollOffset); Serial.print("\t");
 
-    Serial.println("\t");
+  Serial.println("\t");
 
-    Serial.print("Pitch:"); Serial.print(pitch); Serial.print("\t");
-    Serial.print("Gyro Y Angle:"); Serial.print(gyroYangle); Serial.print("\t");
-    Serial.print("Computed Y Angle"); Serial.print(compAngleY); Serial.print("\t");
-    Serial.print("Kalman Y Angle:"); Serial.print(kalAngleY); Serial.print("\t");
-    Serial.print("final pitch:"); Serial.print(kalAngleY + pitchOffset); Serial.print("\t");
+  Serial.print("Pitch:"); Serial.print(pitch); Serial.print("\t");
+  Serial.print("Gyro Y Angle:"); Serial.print(gyroYangle); Serial.print("\t");
+  Serial.print("Computed Y Angle"); Serial.print(compAngleY); Serial.print("\t");
+  Serial.print("Kalman Y Angle:"); Serial.print(kalAngleY); Serial.print("\t");
+  Serial.print("final pitch:"); Serial.print(kalAngleY + pitchOffset); Serial.print("\t");
 
-    Serial.println("\t");
+  Serial.println("\t");
 
-    Serial.print(getGForces(acceleration));
-    Serial.print("g");
+  Serial.print(getGForces(acceleration));
+  Serial.print("g");
 
-    Serial.println("\t");
-    Serial.println("\t");
-
-    delay(100);*/
+  Serial.println("\t");
+  Serial.println("\t");*/
 }
 
 uint16_t FrSkySportSensorMPU6050::send(FrSkySportSingleWireSerial &serial, uint8_t id, uint32_t now)
@@ -226,34 +224,51 @@ uint16_t FrSkySportSensorMPU6050::send(FrSkySportSingleWireSerial &serial, uint8
   uint16_t dataId = SENSOR_NO_DATA_ID;
   if (sensorId == id)
   {
-
     if (sensorInitialized && now > processingTime)
     {
       switch (sensorDataIdx)
       {
         case 0:
+          readAndCalculate(); // do this only once for every cycle s.t all the data sent base on the same sensor readings
+
           dataId = MPU6050_ACC_X_DATA_ID;
-          serial.sendData(dataId, acceleration.acceleration.x);
+          serial.sendData(dataId, acceleration.acceleration.x * 100);
+          processingTime = now + MPU6050_PUSH_PERIOD;
           break;
         case 1:
           dataId = MPU6050_ACC_Y_DATA_ID;
-          serial.sendData(dataId, acceleration.acceleration.y);
+          serial.sendData(dataId, acceleration.acceleration.y * 100);
+          processingTime = now + MPU6050_PUSH_PERIOD;
           break;
         case 2:
           dataId = MPU6050_ACC_Z_DATA_ID;
-          serial.sendData(dataId, acceleration.acceleration.z);
+          serial.sendData(dataId, acceleration.acceleration.z * 100);
+          processingTime = now + MPU6050_PUSH_PERIOD;
           break;
         case 3:
           dataId = MPU6050_GFORCE_DATA_ID;
-          serial.sendData(dataId, getGForces(acceleration));
+          serial.sendData(dataId, getGForces(acceleration) * 100);
+          processingTime = now + MPU6050_PUSH_PERIOD;
           break;
         case 4:
           dataId = MPU6050_PITCH_DATA_ID;
-          serial.sendData(dataId, kalAngleY + pitchOffset);
+          serial.sendData(dataId, (kalAngleY + pitchOffset) * 100);
+          processingTime = now + MPU6050_PUSH_PERIOD;
           break;
         case 5:
           dataId = MPU6050_ROLL_DATA_ID;
-          serial.sendData(dataId, kalAngleX + rollOffset);
+          serial.sendData(dataId, (kalAngleX + rollOffset) * 100);
+          processingTime = now + MPU6050_PUSH_PERIOD;
+          break;
+        case 6:
+          dataId = MPU6050_PITCHSPEED_DATA_ID;
+          serial.sendData(dataId, gyroXrate * 100);
+          processingTime = now + MPU6050_PUSH_PERIOD;
+          break;
+        case 7:
+          dataId = MPU6050_ROLLSPEED_DATA_ID;
+          serial.sendData(dataId, gyroYrate * 100);
+          processingTime = now + MPU6050_DATA_PERIOD;
           break;
       }
     }
@@ -263,11 +278,12 @@ uint16_t FrSkySportSensorMPU6050::send(FrSkySportSingleWireSerial &serial, uint8
       dataId = SENSOR_EMPTY_DATA_ID;
     }
 
-    sensorDataIdx++;
-    if (sensorDataIdx >= MPU6050_DATA_COUNT)
-    {
-      sensorDataIdx = 0;
-      processingTime = now + MPU6050_DATA_PERIOD; // do this here and not above; the idea is that we read the sensor  and calculate once, then send all data after each other
+    if (dataId != SENSOR_EMPTY_DATA_ID) { // some data was send, so go to the next senor value
+      sensorDataIdx++;
+      if (sensorDataIdx >= MPU6050_DATA_COUNT)
+      {
+        sensorDataIdx = 0;
+      }
     }
   }
   return dataId;

@@ -5,16 +5,19 @@
 #include <Kalman.h>
 #include <Adafruit_MPU6050.h>
 
-#define MPU6050_DEFAULT_ID ID23
-#define MPU6050_DATA_COUNT 6
+#define MPU6050_DEFAULT_ID ID22
+#define MPU6050_DATA_COUNT 8
 #define MPU6050_ACC_X_DATA_ID 0x0700
 #define MPU6050_ACC_Y_DATA_ID 0x0710
 #define MPU6050_ACC_Z_DATA_ID 0x0720
-#define MPU6050_GFORCE_DATA_ID 0x0700
-#define MPU6050_PITCH_DATA_ID 0x0710
-#define MPU6050_ROLL_DATA_ID 0x0710
+#define MPU6050_GFORCE_DATA_ID 0x0740
+#define MPU6050_PITCH_DATA_ID 0x0760
+#define MPU6050_ROLL_DATA_ID 0x0780
+#define MPU6050_PITCHSPEED_DATA_ID 0x0781
+#define MPU6050_ROLLSPEED_DATA_ID 0x0782
 
-#define MPU6050_DATA_PERIOD 500
+#define MPU6050_DATA_PERIOD 50 //time interval in MS between sensor readings
+#define MPU6050_PUSH_PERIOD 10 //time interval in MS between individual data pushes
 
 #define RESTRICT_PITCH // Comment out to restrict roll to ±90deg instead - please read: http://www.freescale.com/files/sensors/doc/app_note/AN3461.pdf
 

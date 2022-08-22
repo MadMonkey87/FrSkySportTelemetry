@@ -108,7 +108,7 @@ uint16_t FrSkySportSensorBMP180::send(FrSkySportSingleWireSerial &serial, uint8_
           bmp180sensor.getTemperature(temperature);
           baseLineTemperature = baseLineTemperature * 0.75 + temperature * 0.25;
           temperatureTime = now + max(bmp180sensor.startPressure(BMP180_PRESSURE_PRECISION), BMP180_DATA_PERIOD);
-          serial.sendData(dataId, temperature * 100);
+          serial.sendData(dataId, temperature);
         }
         else
         {
@@ -129,8 +129,8 @@ uint16_t FrSkySportSensorBMP180::send(FrSkySportSingleWireSerial &serial, uint8_
           double oldRelativeAltitude = relativeAltitude;
           relativeAltitude = bmp180sensor.altitude(pressure, baseLinePressure);
           verticalSpeed = (relativeAltitude - oldRelativeAltitude) / (now - oldPressureReadingTime) * 1000;
-
-          serial.sendData(dataId, relativeAltitude * 100);
+          Serial.println(relativeAltitude);
+          serial.sendData(dataId, relativeAltitude);
         }
         else
         {
@@ -143,7 +143,7 @@ uint16_t FrSkySportSensorBMP180::send(FrSkySportSingleWireSerial &serial, uint8_
         if (sensorInitialized && now > verticalSpeedTime)
         {
           verticalSpeedTime = now + BMP180_DATA_PERIOD;
-          serial.sendData(dataId, verticalSpeed * 100);
+          serial.sendData(dataId, verticalSpeed);
         }
         else
         {
@@ -156,7 +156,7 @@ uint16_t FrSkySportSensorBMP180::send(FrSkySportSingleWireSerial &serial, uint8_
         if (sensorInitialized && now > rawPressureTime)
         {
           rawPressureTime = now + BMP180_DATA_PERIOD;
-          serial.sendData(dataId, pressure * 100);
+          serial.sendData(dataId, pressure*100);
         }
         else
         {

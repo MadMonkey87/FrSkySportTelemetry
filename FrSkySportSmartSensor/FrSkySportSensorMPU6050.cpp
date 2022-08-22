@@ -197,26 +197,26 @@ void FrSkySportSensorMPU6050::readAndCalculate()
   }
 
   /*Serial.print("AccRoll:"); Serial.print(roll); Serial.print("\t");
-  Serial.print("GyroRoll:"); Serial.print(gyroXangle); Serial.print("\t");
-  Serial.print("ComputedRoll:"); Serial.print(compAngleX); Serial.print("\t");
-  Serial.print("KalmanRoll:"); Serial.print(kalAngleX); Serial.print("\t");
-  Serial.print("final roll:"); Serial.print(kalAngleX + rollOffset); Serial.print("\t");
+    Serial.print("GyroRoll:"); Serial.print(gyroXangle); Serial.print("\t");
+    Serial.print("ComputedRoll:"); Serial.print(compAngleX); Serial.print("\t");
+    Serial.print("KalmanRoll:"); Serial.print(kalAngleX); Serial.print("\t");
+    Serial.print("final roll:"); Serial.print(kalAngleX + rollOffset); Serial.print("\t");
 
-  Serial.println("\t");
+    Serial.println("\t");
 
-  Serial.print("Pitch:"); Serial.print(pitch); Serial.print("\t");
-  Serial.print("Gyro Y Angle:"); Serial.print(gyroYangle); Serial.print("\t");
-  Serial.print("Computed Y Angle"); Serial.print(compAngleY); Serial.print("\t");
-  Serial.print("Kalman Y Angle:"); Serial.print(kalAngleY); Serial.print("\t");
-  Serial.print("final pitch:"); Serial.print(kalAngleY + pitchOffset); Serial.print("\t");
+    Serial.print("Pitch:"); Serial.print(pitch); Serial.print("\t");
+    Serial.print("Gyro Y Angle:"); Serial.print(gyroYangle); Serial.print("\t");
+    Serial.print("Computed Y Angle"); Serial.print(compAngleY); Serial.print("\t");
+    Serial.print("Kalman Y Angle:"); Serial.print(kalAngleY); Serial.print("\t");
+    Serial.print("final pitch:"); Serial.print(kalAngleY + pitchOffset); Serial.print("\t");
 
-  Serial.println("\t");
+    Serial.println("\t");
 
-  Serial.print(getGForces(acceleration));
-  Serial.print("g");
+    Serial.print(getGForces(acceleration));
+    Serial.print("g");
 
-  Serial.println("\t");
-  Serial.println("\t");*/
+    Serial.println("\t");
+    Serial.println("\t");*/
 }
 
 uint16_t FrSkySportSensorMPU6050::send(FrSkySportSingleWireSerial &serial, uint8_t id, uint32_t now)
@@ -302,7 +302,7 @@ double FrSkySportSensorMPU6050::getRoll(sensors_event_t event)
 #ifdef RESTRICT_PITCH // Eq. 25 and 26
   return atan2(event.acceleration.y, event.acceleration.z) * RAD_TO_DEG;
 #else // Eq. 28 and 29
-  return atan(event.acceleration.y / sqrt(event.acceleration.x * event.acceleration.x + event.acceleration.z * event.acceleration.z) * RAD_TO_DEG;
+  return atan(event.acceleration.y / sqrt(event.acceleration.x * event.acceleration.x + event.acceleration.z * event.acceleration.z)) * RAD_TO_DEG;
 #endif
 }
 

@@ -10,7 +10,7 @@
 #define BMP180_T_DATA_ID 0x0400   // temperature in C
 #define BMP180_P_DATA_ID 0x4800   // pressure in hPa
 
-#define BMP180_DATA_PERIOD 500
+#define BMP180_DATA_PERIOD 333
 #define BMP180_PRESSURE_PRECISION 3 // 1-3 where 3 is the highes precision
 #define BMP180_BASELINE_SAMPLES 3
 

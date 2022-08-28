@@ -20,6 +20,7 @@
 #include "FrSkySportSensorBMP280.h"
 //#include "FrSkySportSensorLSM303.h"
 #include "FrSkySportSensorMPU6050.h"
+#include "FrSkySportSensorLSM6DS3.h"
 #include "FrSkySportSingleWireSerial.h"
 #include "FrSkySportTelemetry.h"
 #if !defined(TEENSY_HW)
@@ -34,6 +35,7 @@ FrSkySportSensorBMP180 bmp180;
 FrSkySportSensorBMP280 bmp280;
 //FrSkySportSensorLSM303 lsm303;
 FrSkySportSensorMPU6050 mpu6050;
+FrSkySportSensorLSM6DS3 lsm6ds3;
 #ifdef POLLING_ENABLED
 #include "FrSkySportPollingDynamic.h"
 FrSkySportTelemetry telemetry(new FrSkySportPollingDynamic()); // Create telemetry object with dynamic (FrSky-like) polling
@@ -75,9 +77,9 @@ void setup()
   Serial.print("Initialize Smart Port...\n");
   // Configure the telemetry serial port and sensors (remember to use & to specify a pointer to sensor)
 #if defined(TEENSY_HW)
-  telemetry.begin(FrSkySportSingleWireSerial::SERIAL_3, &bmp180, &bmp280,/*, &lsm303,*/ &mpu6050);
+  telemetry.begin(FrSkySportSingleWireSerial::SERIAL_3, &bmp180, &bmp280,/*, &lsm303,*/ &mpu6050, &lsm6ds3);
 #else
-  telemetry.begin(FrSkySportSingleWireSerial::SOFT_SERIAL_PIN_12, &bmp180, &bmp280,/*, &lsm303, */&mpu6050);
+  telemetry.begin(FrSkySportSingleWireSerial::SOFT_SERIAL_PIN_12, &bmp180, &bmp280,/*, &lsm303, */&mpu6050, &lsm6ds3);
 #endif
   Serial.println("done!\n");
 
@@ -85,6 +87,7 @@ void setup()
   bmp280.setup();
   //lsm303.setup();
   mpu6050.setup();
+  lsm6ds3.setup();
 
   Serial.println("setup completed!\n");
 }
@@ -110,5 +113,6 @@ void loop()
   // that are being polled at given moment
   telemetry.send();
 
-  mpu6050.loop();
+  //mpu6050.loop();
+  lsm6ds3.loop();
 }

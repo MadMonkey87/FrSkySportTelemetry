@@ -126,6 +126,14 @@ void FrSkySportSensorMPU6050::calibrate()
 {
 }
 
+void FrSkySportSensorMPU6050::loop()
+{
+  readAndCalculate();
+  Serial.print("roll y: "); Serial.print(kalAngleY + pitchOffset);
+  Serial.print("\tpitch x: "); Serial.print(kalAngleX + rollOffset);
+  Serial.print("\tacc: "); Serial.println(getGForces(acceleration));
+}
+
 void FrSkySportSensorMPU6050::readAndCalculate()
 {
   mpu_accel->getEvent(&acceleration);

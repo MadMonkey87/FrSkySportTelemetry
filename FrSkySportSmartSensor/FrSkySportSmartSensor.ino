@@ -12,12 +12,12 @@
 // Use only when there is no device in the S.Port chain (e.g. S.Port capable FrSky receiver) that normally polls the data.
 //#define POLLING_ENABLED
 
-#if defined(DEBUG)
+//#if defined(DEBUG)
 #include "I2CScanner.h"
-#endif
+//#endif
 #include "SBusListener.h"
 #include "FrSkySportSensorBMP180.h"
-//#include "FrSkySportSensorBMP280.h"
+#include "FrSkySportSensorBMP280.h"
 //#include "FrSkySportSensorLSM303.h"
 #include "FrSkySportSensorMPU6050.h"
 #include "FrSkySportSingleWireSerial.h"
@@ -26,12 +26,12 @@
 #include "SoftwareSerial.h"
 #endif
 
-#if defined(DEBUG)
+//#if defined(DEBUG)
 I2CScanner i2cScanner;
-#endif
+//#endif
 SBusListener sbusListener;
 FrSkySportSensorBMP180 bmp180;
-//FrSkySportSensorBMP280 bmp280;
+FrSkySportSensorBMP280 bmp280;
 //FrSkySportSensorLSM303 lsm303;
 FrSkySportSensorMPU6050 mpu6050;
 #ifdef POLLING_ENABLED
@@ -67,24 +67,26 @@ void setup()
 
   Serial.println("\nBooting SmartPort multi sensor\n");
 
-#if defined(DEBUG)
+//#if defined(DEBUG)
   i2cScanner.scan();
-#endif
+//#endif
   sbusListener.setup();
 
   Serial.print("Initialize Smart Port...\n");
   // Configure the telemetry serial port and sensors (remember to use & to specify a pointer to sensor)
 #if defined(TEENSY_HW)
-  telemetry.begin(FrSkySportSingleWireSerial::SERIAL_3, &bmp180,/* &bmp280, &lsm303,*/ &mpu6050);
+  telemetry.begin(FrSkySportSingleWireSerial::SERIAL_3, &bmp180, &bmp280,/*, &lsm303,*/ &mpu6050);
 #else
-  telemetry.begin(FrSkySportSingleWireSerial::SOFT_SERIAL_PIN_12, &bmp180, /*&bmp280, &lsm303, */&mpu6050);
+  telemetry.begin(FrSkySportSingleWireSerial::SOFT_SERIAL_PIN_12, &bmp180, &bmp280,/*, &lsm303, */&mpu6050);
 #endif
   Serial.println("done!\n");
 
   bmp180.setup();
-  //bmp280.setup();
+  bmp280.setup();
   //lsm303.setup();
   mpu6050.setup();
+
+  Serial.println("setup completed!\n");
 }
 
 void loop()
@@ -107,4 +109,6 @@ void loop()
   // Send the telemetry data, note that the data will only be sent for sensors
   // that are being polled at given moment
   telemetry.send();
+
+  mpu6050.loop();
 }

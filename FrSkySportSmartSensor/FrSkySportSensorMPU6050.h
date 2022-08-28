@@ -27,6 +27,7 @@ class FrSkySportSensorMPU6050 : public FrSkySportSensor
     FrSkySportSensorMPU6050(SensorId id = MPU6050_DEFAULT_ID);
     void setup();
     void calibrate();
+    void loop();
     void readAndCalculate();
     virtual uint16_t send(FrSkySportSingleWireSerial &serial, uint8_t id, uint32_t now);
     virtual uint16_t decodeData(uint8_t id, uint16_t appId, uint32_t data);

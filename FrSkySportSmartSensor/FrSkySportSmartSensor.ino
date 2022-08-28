@@ -113,6 +113,6 @@ void loop()
   // that are being polled at given moment
   telemetry.send();
 
-  mpu6050.loop();
-  lsm6ds3.loop();
+  //mpu6050.loop();
+  //lsm6ds3.loop();
 }

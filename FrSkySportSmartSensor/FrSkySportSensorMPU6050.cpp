@@ -108,8 +108,10 @@ void FrSkySportSensorMPU6050::setup()
     compAngleX = roll;
     compAngleY = pitch;
 
-    Serial.print(" - Roll: "); Serial.print(roll); Serial.println("°");
-    Serial.print(" - Pitch: "); Serial.print(pitch); Serial.println("°");
+    Serial.print(" - Acceleration: "); Serial.print(accX); Serial.print(", "); Serial.print(accY); Serial.print(", "); Serial.print(accZ); Serial.println(" (m/s2)");
+    Serial.print(" - Gyroscope in: "); Serial.print(gyroX); Serial.print(", "); Serial.print(gyroY); Serial.print(", "); Serial.print(gyroZ); Serial.println(" (rad/s)");
+    Serial.print(" - Roll (y): "); Serial.print(roll); Serial.println("°");
+    Serial.print(" - Pitch (z): "); Serial.print(pitch); Serial.println("°");
 
     deltaTime = micros();
 

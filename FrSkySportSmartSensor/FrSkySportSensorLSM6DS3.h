@@ -31,9 +31,9 @@ class FrSkySportSensorLSM6DS3 : public FrSkySportSensor
     virtual uint16_t send(FrSkySportSingleWireSerial &serial, uint8_t id, uint32_t now);
     virtual uint16_t decodeData(uint8_t id, uint16_t appId, uint32_t data);
   private:
-    double getRoll(float accX, float accY, float accZ);
-    double getPitch(float accX, float accY, float accZ);
-    double getGForces(float accX, float accY, float accZ);
+    double getRoll();
+    double getPitch();
+    double getGForces();
 
     uint32_t processingTime;    // next time when zhe sensor data gets read and calculated
     bool sensorInitialized;       // true if setting up the sensor was successful

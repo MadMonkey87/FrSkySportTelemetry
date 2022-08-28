@@ -2,24 +2,30 @@
 #include <Kalman.h>
 #include <Arduino_LSM6DS3.h>
 
-LSM6DS3Class IMU2(Wire, 0x6B);
+//LSM6DS3Class lsm6ds3Sensor = LSM6DS3Class();
 
-FrSkySportSensorLSM6DS3::FrSkySportSensorLSM6DS3(SensorId id) : FrSkySportSensor(id) {}
+//LSM6DS3Class:LSM6DS3Class(Wire, 0x6B){
+
+LSM6DS3Class lsm6ds3Sensor(Wire, 0x6B);
+
+FrSkySportSensorLSM6DS3::FrSkySportSensorLSM6DS3(SensorId id) : FrSkySportSensor(id) {
+
+}
 
 void FrSkySportSensorLSM6DS3::setup()
 {
-
-  
-  
   Serial.println("Initialize LSM6DS3...");
-  sensorInitialized =  IMU2.begin();
+  sensorInitialized =  lsm6ds3Sensor.begin();
   if (!sensorInitialized) {
     Serial.println("failed!\n");
     return;
   }
 
+  Serial.print(" - Accelerometer sample rate: "); Serial.print(lsm6ds3Sensor.accelerationSampleRate()); Serial.println("Hz");
+  Serial.print(" - Gyroscope sample rate: "); Serial.print(lsm6ds3Sensor.gyroscopeSampleRate()); Serial.println("Hz");
+
   for (int i = 0; i < 10; i++) {
-    if (IMU2.accelerationAvailable()) {
+    if (lsm6ds3Sensor.accelerationAvailable()) {
       break;
     } else if (i >= 9) {
       sensorInitialized = false;
@@ -31,7 +37,7 @@ void FrSkySportSensorLSM6DS3::setup()
   }
 
   for (int i = 0; i < 10; i++) {
-    if (IMU2.gyroscopeAvailable()) {
+    if (lsm6ds3Sensor.gyroscopeAvailable()) {
       break;
     } else if (i >= 9) {
       sensorInitialized = false;
@@ -42,13 +48,13 @@ void FrSkySportSensorLSM6DS3::setup()
     delay(100);
   }
 
-  IMU2.readAcceleration(accX, accY, accZ);
-  IMU2.readGyroscope(gyroX, gyroY, gyroZ);
+  lsm6ds3Sensor.readAcceleration(accX, accY, accZ);
+  lsm6ds3Sensor.readGyroscope(gyroX, gyroY, gyroZ);
 
   /* Set kalman and gyro starting angle */
 
-  double roll = getRoll(accX, accY, accZ);
-  double pitch = getPitch(accX, accY, accZ);
+  double roll = getRoll();
+  double pitch = getPitch();
 
   // assumed that the initial position is the neutral position
   rollOffset = -roll;
@@ -61,16 +67,14 @@ void FrSkySportSensorLSM6DS3::setup()
   compAngleX = roll;
   compAngleY = pitch;
 
-  Serial.print("Roll: ");
-  Serial.print(roll);
-  Serial.println("°");
-  Serial.print("Pitch: ");
-  Serial.print(pitch);
-  Serial.println("°");
+  Serial.print(" - Acceleration: "); Serial.print(accX); Serial.print("g, "); Serial.print(accY); Serial.print("g, "); Serial.print(accZ);Serial.println("g");
+  Serial.print(" - Gyroscope in: "); Serial.print(gyroX); Serial.print(", "); Serial.print(gyroY); Serial.print(", "); Serial.print(gyroZ);Serial.println(" (deg/s)");
+  Serial.print(" - Roll (y): "); Serial.print(roll); Serial.println("°");
+  Serial.print(" - Pitch (z): "); Serial.print(pitch); Serial.println("°");
 
   deltaTime = micros();
 
-  Serial.println("\ndone!\n");
+  Serial.println("done!\n");
 }
 
 void FrSkySportSensorLSM6DS3::calibrate()
@@ -80,25 +84,23 @@ void FrSkySportSensorLSM6DS3::calibrate()
 void FrSkySportSensorLSM6DS3::loop()
 {
   readAndCalculate();
-  Serial.print("roll y: "); Serial.print(kalAngleY + pitchOffset);
-  Serial.print("\tpitch x: "); Serial.print(kalAngleX + rollOffset);
-  Serial.print("\tacc: "); Serial.println(getGForces(accX, accY, accZ));
+  Serial.print("LSM6S3 x: ");Serial.print(accX);Serial.print(" y: ");Serial.print(accY);Serial.print(" z:"); Serial.print(accZ);Serial.print(" rolly: ");Serial.print(kalAngleY);Serial.print(" pitchx: ");Serial.print(kalAngleX);Serial.print(" g :");Serial.println(getGForces());
 }
 
 void FrSkySportSensorLSM6DS3::readAndCalculate()
 {
-  if (!IMU2.accelerationAvailable() || !IMU2.gyroscopeAvailable()) {
+  if (!lsm6ds3Sensor.accelerationAvailable() || !lsm6ds3Sensor.gyroscopeAvailable()) {
     return;
   }
 
-  IMU2.readAcceleration(accX, accY, accZ);
-  IMU2.readGyroscope(gyroX, gyroY, gyroZ);
+  lsm6ds3Sensor.readAcceleration(accX, accY, accZ);
+  lsm6ds3Sensor.readGyroscope(gyroX, gyroY, gyroZ);
 
   double dt = (double)(micros() - deltaTime) / 1000000; // Calculate delta time
   deltaTime = micros();
 
-  double roll = getRoll(accX, accY, accZ);
-  double pitch = getPitch(accX, accY, accZ);
+  double roll = getRoll();
+  double pitch = getPitch();
 
   gyroXrate = gyroX / 131.0; // Convert to deg/s
   gyroYrate = gyroY / 131.0; // Convert to deg/s
@@ -194,7 +196,7 @@ uint16_t FrSkySportSensorLSM6DS3::send(FrSkySportSingleWireSerial & serial, uint
         case 0:
           readAndCalculate(); // do this only once for every cycle s.t all the data sent base on the same sensor readings
           dataId = LSM6DS3_GFORCE_DATA_ID;
-          serial.sendData(dataId, getGForces(accX, accY, accZ) * 100);
+          serial.sendData(dataId, getGForces() * 100);
           processingTime = now + LSM6DS3_PUSH_PERIOD;
           break;
         case 1:
@@ -257,7 +259,7 @@ uint16_t FrSkySportSensorLSM6DS3::decodeData(uint8_t id, uint16_t appId, uint32_
   return SENSOR_NO_DATA_ID;
 }
 
-double FrSkySportSensorLSM6DS3::getRoll(float accX, float accY, float accZ)
+double FrSkySportSensorLSM6DS3::getRoll()
 {
   // Source: http://www.freescale.com/files/sensors/doc/app_note/AN3461.pdf eq. 25 and eq. 26
   // atan2 outputs the value of -π to π (radians) - see http://en.wikipedia.org/wiki/Atan2
@@ -269,7 +271,7 @@ double FrSkySportSensorLSM6DS3::getRoll(float accX, float accY, float accZ)
 #endif
 }
 
-double FrSkySportSensorLSM6DS3::getPitch(float accX, float accY, float accZ)
+double FrSkySportSensorLSM6DS3::getPitch()
 {
   // Source: http://www.freescale.com/files/sensors/doc/app_note/AN3461.pdf eq. 25 and eq. 26
   // atan2 outputs the value of -π to π (radians) - see http://en.wikipedia.org/wiki/Atan2
@@ -281,7 +283,7 @@ double FrSkySportSensorLSM6DS3::getPitch(float accX, float accY, float accZ)
 #endif
 }
 
-double FrSkySportSensorLSM6DS3::getGForces(float accX, float accY, float accZ)
+double FrSkySportSensorLSM6DS3::getGForces()
 {
-  return sqrt(accX * accX + accY * accY + accZ * accZ) / 9.81;
+  return sqrt(accX * accX + accY * accY + accZ * accZ);
 }

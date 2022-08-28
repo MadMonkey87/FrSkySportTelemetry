@@ -24,7 +24,7 @@ void FrSkySportSensorMPU6050::setup()
     mpu_gyro->printSensorDetails();
 
     mpu.setAccelerometerRange(MPU6050_RANGE_8_G);
-    Serial.print("Accelerometer range set to: ");
+    Serial.print(" - Accelerometer range set to: ");
     switch (mpu.getAccelerometerRange())
     {
       case MPU6050_RANGE_2_G:
@@ -41,7 +41,7 @@ void FrSkySportSensorMPU6050::setup()
         break;
     }
     mpu.setGyroRange(MPU6050_RANGE_500_DEG);
-    Serial.print("Gyro range set to: ");
+    Serial.print(" - Gyro range set to: ");
     switch (mpu.getGyroRange())
     {
       case MPU6050_RANGE_250_DEG:
@@ -59,7 +59,7 @@ void FrSkySportSensorMPU6050::setup()
     }
 
     mpu.setFilterBandwidth(MPU6050_BAND_21_HZ);
-    Serial.print("Filter bandwidth set to: ");
+    Serial.print(" - Filter bandwidth set to: ");
     switch (mpu.getFilterBandwidth())
     {
       case MPU6050_BAND_260_HZ:
@@ -90,9 +90,12 @@ void FrSkySportSensorMPU6050::setup()
     /* Set kalman and gyro starting angle */
     sensors_event_t acceleration;
     mpu_accel->getEvent(&acceleration);
+    accX = acceleration.acceleration.x;
+    accY = acceleration.acceleration.y;
+    accZ = acceleration.acceleration.z;
 
-    double roll = getRoll(acceleration);
-    double pitch = getPitch(acceleration);
+    double roll = getRoll();
+    double pitch = getPitch();
 
     // assumed that the initial position is the neutral position
     rollOffset = -roll;
@@ -105,16 +108,12 @@ void FrSkySportSensorMPU6050::setup()
     compAngleX = roll;
     compAngleY = pitch;
 
-    Serial.print("Roll: ");
-    Serial.print(roll);
-    Serial.println("°");
-    Serial.print("Pitch: ");
-    Serial.print(pitch);
-    Serial.println("°");
+    Serial.print(" - Roll: "); Serial.print(roll); Serial.println("°");
+    Serial.print(" - Pitch: "); Serial.print(pitch); Serial.println("°");
 
     deltaTime = micros();
 
-    Serial.println("\ndone!\n");
+    Serial.println("done!\n");
   }
   else
   {
@@ -129,21 +128,29 @@ void FrSkySportSensorMPU6050::calibrate()
 void FrSkySportSensorMPU6050::loop()
 {
   readAndCalculate();
-  Serial.print("roll y: "); Serial.print(kalAngleY + pitchOffset);
-  Serial.print("\tpitch x: "); Serial.print(kalAngleX + rollOffset);
-  Serial.print("\tacc: "); Serial.println(getGForces(acceleration));
+  Serial.println("\n ");
+  Serial.print("MPU6050 x: "); Serial.print(accX); Serial.print(" y: "); Serial.print(accY); Serial.print(" z:"); Serial.print(accZ); Serial.print(" rolly: "); Serial.print(kalAngleY); Serial.print(" pitchx: "); Serial.print(kalAngleX); Serial.print(" g :"); Serial.println(getGForces());
 }
 
 void FrSkySportSensorMPU6050::readAndCalculate()
 {
+  sensors_event_t acceleration;
   mpu_accel->getEvent(&acceleration);
+  accX = acceleration.acceleration.x;
+  accY = acceleration.acceleration.y;
+  accZ = acceleration.acceleration.z;
+
+  sensors_event_t gyro;
   mpu_gyro->getEvent(&gyro);
+  gyroX = gyro.acceleration.x;
+  gyroY = gyro.acceleration.y;
+  gyroZ = gyro.acceleration.z;
 
   double dt = (double)(micros() - deltaTime) / 1000000; // Calculate delta time
   deltaTime = micros();
 
-  double roll = getRoll(acceleration);
-  double pitch = getPitch(acceleration);
+  double roll = getRoll();
+  double pitch = getPitch();
 
   gyroXrate = gyro.gyro.x / 131.0; // Convert to deg/s
   gyroYrate = gyro.gyro.y / 131.0; // Convert to deg/s
@@ -239,7 +246,7 @@ uint16_t FrSkySportSensorMPU6050::send(FrSkySportSingleWireSerial &serial, uint8
         case 0:
           readAndCalculate(); // do this only once for every cycle s.t all the data sent base on the same sensor readings
           dataId = MPU6050_GFORCE_DATA_ID;
-          serial.sendData(dataId, getGForces(acceleration) * 100);
+          serial.sendData(dataId, getGForces() * 100);
           processingTime = now + MPU6050_PUSH_PERIOD;
           break;
         case 1:
@@ -302,31 +309,31 @@ uint16_t FrSkySportSensorMPU6050::decodeData(uint8_t id, uint16_t appId, uint32_
   return SENSOR_NO_DATA_ID;
 }
 
-double FrSkySportSensorMPU6050::getRoll(sensors_event_t event)
+double FrSkySportSensorMPU6050::getRoll()
 {
   // Source: http://www.freescale.com/files/sensors/doc/app_note/AN3461.pdf eq. 25 and eq. 26
   // atan2 outputs the value of -π to π (radians) - see http://en.wikipedia.org/wiki/Atan2
   // It is then converted from radians to degrees
 #ifdef RESTRICT_PITCH // Eq. 25 and 26
-  return atan2(event.acceleration.y, event.acceleration.z) * RAD_TO_DEG;
+  return atan2(accY, accZ) * RAD_TO_DEG;
 #else // Eq. 28 and 29
-  return atan(event.acceleration.y / sqrt(event.acceleration.x * event.acceleration.x + event.acceleration.z * event.acceleration.z)) * RAD_TO_DEG;
+  return atan(accY / sqrt(accX * accX + accZ * accZ)) * RAD_TO_DEG;
 #endif
 }
 
-double FrSkySportSensorMPU6050::getPitch(sensors_event_t event)
+double FrSkySportSensorMPU6050::getPitch()
 {
   // Source: http://www.freescale.com/files/sensors/doc/app_note/AN3461.pdf eq. 25 and eq. 26
   // atan2 outputs the value of -π to π (radians) - see http://en.wikipedia.org/wiki/Atan2
   // It is then converted from radians to degrees
 #ifdef RESTRICT_PITCH // Eq. 25 and 26
-  return atan(-event.acceleration.x / sqrt(event.acceleration.y * event.acceleration.y + event.acceleration.z * event.acceleration.z)) * RAD_TO_DEG;
+  return atan(-accX / sqrt(accY * accY + accZ * accZ)) * RAD_TO_DEG;
 #else // Eq. 28 and 29
-  return atan2(-event.acceleration.x, event.acceleration.z) * RAD_TO_DEG;
+  return atan2(-accX, accZ) * RAD_TO_DEG;
 #endif
 }
 
-double FrSkySportSensorMPU6050::getGForces(sensors_event_t event)
+double FrSkySportSensorMPU6050::getGForces()
 {
-  return sqrt(event.acceleration.x * event.acceleration.x + event.acceleration.y * event.acceleration.y + event.acceleration.z * event.acceleration.z) / 9.81;
+  return sqrt(accX * accX + accY * accY + accZ * accZ) / 9.81;
 }

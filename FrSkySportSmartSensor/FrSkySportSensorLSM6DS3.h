@@ -9,9 +9,6 @@ class FrSkySportSensorLSM6DS3 : public FrSkySportSensorOrientation
     FrSkySportSensorLSM6DS3(SensorId id = ORIENTATION_DEFAULT_ID);
     void setup();
   private:
-    double getRoll();
-    double getPitch();
-    double getGForces();
     void readSensorData();
     uint16_t getSampleRate();
 };

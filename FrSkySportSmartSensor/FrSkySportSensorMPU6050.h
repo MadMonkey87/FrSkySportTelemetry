@@ -8,11 +8,8 @@ class FrSkySportSensorMPU6050 : public FrSkySportSensorOrientation
   public:
     FrSkySportSensorMPU6050(SensorId id = ORIENTATION_DEFAULT_ID);
     void setup();
-    
+
   private:
-    double getRoll();
-    double getPitch();
-    double getGForces();
     void readSensorData();
     uint16_t getSampleRate();
 };

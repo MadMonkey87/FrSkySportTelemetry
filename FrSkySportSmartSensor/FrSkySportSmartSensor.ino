@@ -16,7 +16,7 @@
 #include "SBusListener.h"
 #include "FrSkySportSensorBMP180.h"
 #include "FrSkySportSensorBMP280.h"
-//#include "FrSkySportSensorLSM303.h"
+#include "FrSkySportSensorLSM303Magnet.h"
 #include "FrSkySportSensorMPU6050.h"
 #include "FrSkySportSensorLSM6DS3.h"
 #include "FrSkySportSingleWireSerial.h"
@@ -29,7 +29,7 @@ I2CScanner i2cScanner;
 SBusListener sbusListener;
 FrSkySportSensorBMP180 bmp180;
 FrSkySportSensorBMP280 bmp280;
-//FrSkySportSensorLSM303 lsm303;
+FrSkySportSensorLSM303Magnet lsm303magnetometer;
 FrSkySportSensorMPU6050 mpu6050;
 FrSkySportSensorLSM6DS3 lsm6ds3;
 #ifdef POLLING_ENABLED
@@ -72,15 +72,15 @@ void setup()
   Serial.print("Initialize Smart Port...\n");
   // Configure the telemetry serial port and sensors (remember to use & to specify a pointer to sensor)
 #if defined(TEENSY_HW)
-  telemetry.begin(FrSkySportSingleWireSerial::SERIAL_3, &bmp180, &bmp280,/*, &lsm303,*/ &mpu6050, &lsm6ds3);
+  telemetry.begin(FrSkySportSingleWireSerial::SERIAL_3, &bmp180, &bmp280, &lsm303magnetometer, &mpu6050, &lsm6ds3);
 #else
-  telemetry.begin(FrSkySportSingleWireSerial::SOFT_SERIAL_PIN_12, &bmp180, &bmp280,/*, &lsm303, */&mpu6050, &lsm6ds3);
+  telemetry.begin(FrSkySportSingleWireSerial::SOFT_SERIAL_PIN_12, &bmp180, &bmp280, &lsm303magnetometer, &mpu6050, &lsm6ds3);
 #endif
   Serial.println("done!\n");
 
   bmp180.setup();
   bmp280.setup();
-  //lsm303.setup();
+  lsm303magnetometer.setup();
   mpu6050.setup();
   lsm6ds3.setup();
 
@@ -110,4 +110,5 @@ void loop()
 
   //mpu6050.loop();
   //lsm6ds3.loop();
+  //lsm303magnetometer.loop();
 }

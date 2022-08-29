@@ -5,8 +5,6 @@
 #include <Kalman.h>
 #include <MadgwickAHRS.h>
 
-#define ORIENTATION_DEFAULT_ID ID23
-
 #define ORIENTATION_DEFAULT_ID ID22
 #define ORIENTATION_DATA_COUNT 8
 #define ORIENTATION_ACC_X_DATA_ID 0x0700
@@ -23,25 +21,26 @@
 
 class FrSkySportSensorOrientation : public FrSkySportSensor
 {
-public:
-  FrSkySportSensorOrientation(SensorId id = ORIENTATION_DEFAULT_ID);
-  uint16_t send(FrSkySportSingleWireSerial &serial, uint8_t id, uint32_t now);
-  uint16_t decodeData(uint8_t id, uint16_t appId, uint32_t data);
-  void setup();
-  void loop();
+  public:
+    FrSkySportSensorOrientation(SensorId id = ORIENTATION_DEFAULT_ID);
+    uint16_t send(FrSkySportSingleWireSerial &serial, uint8_t id, uint32_t now);
+    uint16_t decodeData(uint8_t id, uint16_t appId, uint32_t data);
+    void setup();
+    void loop();
 
-protected:
+  protected:
     virtual void readSensorData();
     virtual uint16_t getSampleRate();
     bool sensorInitialized;           // true if setting up the sensor was successful
     double accX, accY, accZ;          // acceleration data of the sensor
     double gyroX, gyroY, gyroZ;       // gyro data of the sensor
+    double magnetometerX, magnetometerY, magnetometerZ;       // magnetometer data of the sensor
 
-private:
-  void readAndCalculate();
-  double getRoll();
-  double getPitch();
-  double getGForces();
+  private:
+    void readAndCalculate();
+    double getRoll();
+    double getPitch();
+    double getGForces();
     uint32_t processingTime;    // next time when the sensor data gets read and calculated
     double pitchOffset, rollOffset;
     uint32_t deltaTime; //used to determine the exact dt passed between sensor events

@@ -79,6 +79,8 @@ uint16_t FrSkySportSensorOrientation::decodeData(uint8_t id, uint16_t appId, uin
 
 void FrSkySportSensorOrientation::readSensorData(){}
 
+uint16_t FrSkySportSensorOrientation::getSampleRate(){ return 0; }
+
 void FrSkySportSensorOrientation::setup(){
     delay(100); // Wait for sensor to stabilize
 
@@ -98,6 +100,8 @@ void FrSkySportSensorOrientation::setup(){
     compAngleX = roll;
     compAngleY = pitch;
 
+    filter.begin(getSampleRate());
+    Serial.print(" - Sensor sample rate: ");Serial.print(getSampleRate());Serial.println(" Hz");
     Serial.print(" - Acceleration: "); Serial.print(accX); Serial.print(", "); Serial.print(accY); Serial.print(", "); Serial.print(accZ); Serial.println(" (m/s2)");
     Serial.print(" - Gyroscope in: "); Serial.print(gyroX); Serial.print(", "); Serial.print(gyroY); Serial.print(", "); Serial.print(gyroZ); Serial.println(" (rad/s)");
     Serial.print(" - Roll (y): "); Serial.print(roll); Serial.println("°");
@@ -110,6 +114,11 @@ void FrSkySportSensorOrientation::loop()
 {
   readAndCalculate();
   Serial.print("x: "); Serial.print(accX); Serial.print(" y: "); Serial.print(accY); Serial.print(" z:"); Serial.print(accZ); Serial.print(" rolly: "); Serial.print(kalAngleY); Serial.print(" pitchx: "); Serial.print(kalAngleX); Serial.print(" g :"); Serial.println(getGForces());
+
+  Serial.print("roll: ");Serial.print(filter.getRoll());
+  Serial.print("pitch: ");Serial.print(filter.getPitch());
+  Serial.print("yaw: ");Serial.println(filter.getYaw());
+  Serial.println("");
 }
 
 void FrSkySportSensorOrientation::readAndCalculate()
@@ -118,6 +127,8 @@ void FrSkySportSensorOrientation::readAndCalculate()
 
   double dt = (double)(micros() - deltaTime) / 1000000; // Calculate delta time
   deltaTime = micros();
+
+  filter.updateIMU(gyroX, gyroY, gyroZ, accX, accY, accZ);
 
   double roll = getRoll();
   double pitch = getPitch();

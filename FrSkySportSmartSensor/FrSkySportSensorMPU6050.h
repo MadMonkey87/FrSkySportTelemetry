@@ -13,7 +13,8 @@ class FrSkySportSensorMPU6050 : public FrSkySportSensorOrientation
     double getRoll();
     double getPitch();
     double getGForces();
-    virtual void readSensorData();
+    void readSensorData();
+    uint16_t getSampleRate();
 };
 
 #endif

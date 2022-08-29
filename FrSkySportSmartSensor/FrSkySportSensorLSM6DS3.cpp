@@ -55,3 +55,7 @@ void FrSkySportSensorLSM6DS3::readSensorData() {
   lsm6ds3Sensor.readGyroscope(x, y, z);
   gyroX = x; gyroY = y; gyroZ = z;
 }
+
+uint16_t FrSkySportSensorLSM6DS3::getSampleRate() {
+  return lsm6ds3Sensor.accelerationSampleRate();
+}

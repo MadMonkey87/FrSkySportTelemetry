@@ -3,6 +3,7 @@
 
 #include "FrSkySportSensor.h"
 #include <Kalman.h>
+#include <MadgwickAHRS.h>
 
 #define ORIENTATION_DEFAULT_ID ID23
 
@@ -31,6 +32,7 @@ public:
 
 protected:
     virtual void readSensorData();
+    virtual uint16_t getSampleRate();
     bool sensorInitialized;           // true if setting up the sensor was successful
     double accX, accY, accZ;          // acceleration data of the sensor
     double gyroX, gyroY, gyroZ;       // gyro data of the sensor
@@ -40,16 +42,18 @@ private:
   double getRoll();
   double getPitch();
   double getGForces();
-      uint32_t processingTime;    // next time when the sensor data gets read and calculated
+    uint32_t processingTime;    // next time when the sensor data gets read and calculated
     double pitchOffset, rollOffset;
+    uint32_t deltaTime; //used to determine the exact dt passed between sensor events
+    double gyroXrate; //deg/s
+    double gyroYrate; //deg/s
     double gyroXangle, gyroYangle; // Angle calculate using the gyro only
     double compAngleX, compAngleY; // Calculated angle using a complementary filter
     double kalAngleX, kalAngleY; // Calculated angle using a Kalman filter
     Kalman kalmanX;
     Kalman kalmanY;
-    uint32_t deltaTime; //used to determine the exact dt passed between sensor events
-    double gyroXrate; //deg/s
-    double gyroYrate; //deg/s
+    Madgwick filter;
+
 };
 
 #endif

@@ -94,7 +94,7 @@ void FrSkySportSensorMPU6050::setup()
   }
 }
 
-void FrSkySportSensorMPU6050::readSensorData(){
+void FrSkySportSensorMPU6050::readSensorData() {
   sensors_event_t acceleration;
   mpu_accel->getEvent(&acceleration);
   accX = acceleration.acceleration.x;
@@ -106,4 +106,25 @@ void FrSkySportSensorMPU6050::readSensorData(){
   gyroX = gyro.acceleration.x;
   gyroY = gyro.acceleration.y;
   gyroZ = gyro.acceleration.z;
+}
+
+uint16_t FrSkySportSensorMPU6050::getSampleRate() {
+  switch (mpu.getFilterBandwidth())
+  {
+    case MPU6050_BAND_260_HZ:
+      return 260;
+    case MPU6050_BAND_184_HZ:
+      return 184;
+    case MPU6050_BAND_94_HZ:
+      return 94;
+    case MPU6050_BAND_44_HZ:
+      return 44;
+    case MPU6050_BAND_21_HZ:
+      return 21;
+    case MPU6050_BAND_10_HZ:
+      return 10;
+    case MPU6050_BAND_5_HZ:
+      return 5;
+  }
+  return 0;
 }

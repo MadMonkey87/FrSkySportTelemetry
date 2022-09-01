@@ -71,9 +71,9 @@ void setup()
   Serial.print("Initialize Smart Port...\n");
   // Configure the telemetry serial port and sensors (remember to use & to specify a pointer to sensor)
 #if defined(TEENSY_HW)
-  telemetry.begin(FrSkySportSingleWireSerial::SERIAL_3, &lsm6ds3, &hmc5883l);
+  telemetry.begin(FrSkySportSingleWireSerial::SERIAL_3, &lsm6ds3);
 #else
-  telemetry.begin(FrSkySportSingleWireSerial::SOFT_SERIAL_PIN_12, &lsm6ds3, &hmc5883l);
+  telemetry.begin(FrSkySportSingleWireSerial::SOFT_SERIAL_PIN_12, &lsm6ds3);
 #endif
   Serial.println("done!\n");
 
@@ -83,7 +83,7 @@ void setup()
   lsm303a.Setup();
   mpu6050.Setup();
   lsm6ds3.setup();
-  hmc5883l.setup();
+  hmc5883l.Setup();
 
   Serial.println("setup completed!\n");
 }
@@ -119,6 +119,7 @@ void loop()
   lsm303m.UpdateSensorData();
   lsm303a.UpdateSensorData();
   mpu6050.UpdateSensorData();
+  hmc5883l.UpdateSensorData();
   //Serial.print("bpm180:");Serial.print(bmp180.RelativeAltitude);Serial.print(" bpm280:");Serial.println(bmp280.RelativeAltitude);
   Serial.print("mpu6050:");Serial.print(mpu6050.Temperature);Serial.print("bpm180:");Serial.print(bmp180.Temperature);Serial.print(" bpm280:");Serial.println(bmp280.Temperature);
 }

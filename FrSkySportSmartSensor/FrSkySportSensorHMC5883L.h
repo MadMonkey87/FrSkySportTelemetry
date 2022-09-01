@@ -1,17 +1,19 @@
 #ifndef _FRSKY_SPORT_SENSOR_HMC5883L_H_
 #define _FRSKY_SPORT_SENSOR_HMC5883L_H_
 
-#include "FrSkySportSensorOrientation.h"
+#include <Adafruit_HMC5883_U.h>
 
-class FrSkySportSensorHMC5883L : public FrSkySportSensorOrientation
+#include "HardwareMagneticSensor.h"
+
+class FrSkySportSensorHMC5883L : public HardwareMagneticSensor
 {
   public:
-    FrSkySportSensorHMC5883L(SensorId id = ORIENTATION_DEFAULT_ID);
-    void setup();
+    FrSkySportSensorHMC5883L();
+    bool Setup();
+    void UpdateSensorData();
 
   private:
-    void readSensorData();
-    uint16_t getSampleRate();
+    Adafruit_HMC5883_Unified sensor;
 };
 
 #endif

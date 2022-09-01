@@ -6,7 +6,7 @@
   Note that you need Teensy 3.x/4.0/LC, ESP8266, ATmega2560 (Mega) or ATmega328P based (e.g. Pro Mini, Nano, Uno) board and FrSkySportTelemetry library for this example to work
 */
 
-// #define DEBUG
+//#define DEBUG
 
 // Uncomment the #define below to enable internal polling of data.
 // Use only when there is no device in the S.Port chain (e.g. S.Port capable FrSky receiver) that normally polls the data.
@@ -19,6 +19,7 @@
 #include "FrSkySportSensorLSM303Magnet.h"
 #include "FrSkySportSensorMPU6050.h"
 #include "FrSkySportSensorLSM6DS3.h"
+#include "FrSkySportSensorHMC5883L.h"
 #include "FrSkySportSingleWireSerial.h"
 #include "FrSkySportTelemetry.h"
 #if !defined(TEENSY_HW)
@@ -32,6 +33,7 @@ FrSkySportSensorBMP280 bmp280;
 FrSkySportSensorLSM303Magnet lsm303magnetometer;
 FrSkySportSensorMPU6050 mpu6050;
 FrSkySportSensorLSM6DS3 lsm6ds3;
+FrSkySportSensorHMC5883L hmc5883l;
 #ifdef POLLING_ENABLED
 #include "FrSkySportPollingDynamic.h"
 FrSkySportTelemetry telemetry(new FrSkySportPollingDynamic()); // Create telemetry object with dynamic (FrSky-like) polling
@@ -45,12 +47,9 @@ unsigned long lastLoopTime = millis();
 
 void setup()
 {
-  delay(1000);
-
-  Serial.print("Compile time: ");
-  Serial.println(__TIMESTAMP__);
-  Serial.print("File: ");
-  Serial.println(__FILE__);
+  Serial.println("Booting SmartPort multi sensor\n");
+  Serial.println("v0.1 Alpha\n");
+  Serial.print("Compile time: ");Serial.println(__TIMESTAMP__);
 
 #if defined(DEBUG)
   Serial.println("Debug: yes");
@@ -63,8 +62,6 @@ void setup()
   Serial.println("Running on teensy: no\n");
 #endif
 
-  Serial.println("\nBooting SmartPort multi sensor\n");
-
   i2cScanner.scan();
 
   sbusListener.setup();
@@ -72,17 +69,18 @@ void setup()
   Serial.print("Initialize Smart Port...\n");
   // Configure the telemetry serial port and sensors (remember to use & to specify a pointer to sensor)
 #if defined(TEENSY_HW)
-  telemetry.begin(FrSkySportSingleWireSerial::SERIAL_3, &bmp180, &bmp280, &lsm303magnetometer, &mpu6050, &lsm6ds3);
+  telemetry.begin(FrSkySportSingleWireSerial::SERIAL_3, &lsm303magnetometer, &mpu6050, &lsm6ds3, &hmc5883l);
 #else
-  telemetry.begin(FrSkySportSingleWireSerial::SOFT_SERIAL_PIN_12, &bmp180, &bmp280, &lsm303magnetometer, &mpu6050, &lsm6ds3);
+  telemetry.begin(FrSkySportSingleWireSerial::SOFT_SERIAL_PIN_12, &lsm303magnetometer, &mpu6050, &lsm6ds3, &hmc5883l);
 #endif
   Serial.println("done!\n");
 
-  bmp180.setup();
-  bmp280.setup();
+  bmp180.Setup();
+  bmp280.Setup();
   lsm303magnetometer.setup();
   mpu6050.setup();
   lsm6ds3.setup();
+  hmc5883l.setup();
 
   Serial.println("setup completed!\n");
 }
@@ -111,4 +109,10 @@ void loop()
   //mpu6050.loop();
   //lsm6ds3.loop();
   //lsm303magnetometer.loop();
+  //hmc5883l.loop();
+
+  bmp180.UpdateSensorData();
+  bmp280.UpdateSensorData();
+  Serial.print("bpm180:");Serial.print(bmp180.RelativeAltitude);Serial.print(" bpm280:");Serial.println(bmp280.RelativeAltitude);
+  //Serial.print("bpm180:");Serial.print(bmp180.Temperature);Serial.print(" bpm280:");Serial.println(bmp280.Temperature);
 }

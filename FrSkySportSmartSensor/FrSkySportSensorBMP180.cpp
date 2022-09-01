@@ -1,20 +1,29 @@
 #include "FrSkySportSensorBMP180.h"
 
-#if defined(TEENSY_HW)
-#include "Teensy_BMP180.h"
-#else
-#include "SFE_BMP180.h"
-#endif
+bool FrSkySportSensorBMP180::Setup(){
+  Serial.println("Initialize BMP085/BMP180...");
+  
+  if (!sensor.begin()){
+    Serial.println("failed!");
+    return false;
+  }
+  
+  Serial.print(" - Temperature: ");Serial.print(sensor.readTemperature());Serial.println(" C°");
+  baseAirPressure = sensor.readPressure();
+  Serial.print(" - Pressure: ");Serial.print(baseAirPressure / 100.0);Serial.println(" hPa");
 
-#include "SFE_BMP180.h"
 
-#include <Wire.h>
-SFE_BMP180 bmp180sensor;
-
-FrSkySportSensorBMP180::FrSkySportSensorBMP180(SensorId id) : FrSkySportSensor(id)
-{
+  Serial.println("done!\n");
+  return true;
 }
 
+void FrSkySportSensorBMP180::UpdateSensorData(){
+  AirPressure = sensor.readPressure() / 100.0;
+  RelativeAltitude = sensor.readAltitude(baseAirPressure);
+  Temperature = sensor.readTemperature();
+}
+
+/*
 void FrSkySportSensorBMP180::setup()
 {
   Serial.println("Initialize BMP180...");
@@ -177,3 +186,4 @@ uint16_t FrSkySportSensorBMP180::decodeData(uint8_t id, uint16_t appId, uint32_t
 {
   return SENSOR_NO_DATA_ID;
 }
+*/

@@ -118,19 +118,39 @@ void FrSkySportSensorOrientation::loop()
   if(!sensorInitialized){
     return;
   }
-  readAndCalculate();
+  /*readAndCalculate();
   Serial.print("x: "); Serial.print(accX); Serial.print(" y: "); Serial.print(accY); Serial.print(" z:"); Serial.print(accZ); Serial.print(" rolly: "); Serial.print(kalAngleY); Serial.print(" pitchx: "); Serial.print(kalAngleX); Serial.print(" g :"); Serial.println(getGForces());
   Serial.print("roll: "); Serial.print(filter.getRoll());
   Serial.print("pitch: "); Serial.print(filter.getPitch());
   Serial.print("yaw: "); Serial.println(filter.getYaw());
-  Serial.println("");
+  Serial.println("");*/
 
-  /*readSensorData();
-    float heading = (atan2(magnetometerY, magnetometerX) * 180) / PI;
-    if (heading < 0) {
-    heading = 360 + heading;
-    }
-    Serial.println(heading);*/
+  readSensorData();
+
+  // Hold the module so that Z is pointing 'up' and you can measure the heading with x&y
+  // Calculate heading when the magnetometer is level, then correct for signs of axis.
+  float heading = atan2(magnetometerY, magnetometerX);
+  
+  // Once you have your heading, you must then add your 'Declination Angle', which is the 'Error' of the magnetic field in your location.
+  // Find yours here: http://www.magnetic-declination.com/
+  // Mine is: -13* 2' W, which is ~13 Degrees, or (which we need) 0.22 radians
+  // If you cannot find your Declination, comment out these two lines, your compass will be slightly off.
+  float declinationAngle = 0.22;
+  heading += declinationAngle;
+  
+  // Correct for when signs are reversed.
+  if(heading < 0)
+    heading += 2*PI;
+    
+  // Check for wrap due to addition of declination.
+  if(heading > 2*PI)
+    heading -= 2*PI;
+   
+  // Convert radians to degrees for readability.
+  float headingDegrees = heading * 180/M_PI; 
+  Serial.print("heading: ");
+  Serial.print(headingDegrees);
+  Serial.print("° x:");Serial.print(magnetometerX);Serial.print(" y:");Serial.print(magnetometerY);Serial.print(" z:");Serial.println(magnetometerY);
 }
 
 void FrSkySportSensorOrientation::readAndCalculate()

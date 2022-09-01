@@ -1,26 +1,43 @@
 #include "FrSkySportSensorBMP280.h"
 #include <Wire.h>
-#include <Adafruit_BMP280.h>
 
-Adafruit_BMP280 bmp280sensor;
+bool FrSkySportSensorBMP280::Setup(){
+  Serial.println("Initialize BMP085/BMP180...");
+  
+  if (!sensor.begin(0x76)){
+    Serial.println("failed!");
+    return false;
+  }
 
-FrSkySportSensorBMP280::FrSkySportSensorBMP280(SensorId id) : FrSkySportSensor(id)
-{
+  sensor.setSampling(
+      Adafruit_BMP280::MODE_NORMAL,     /* Operating Mode. */
+      Adafruit_BMP280::SAMPLING_X1,     /* Temp. oversampling */
+      Adafruit_BMP280::SAMPLING_X8,    /* Pressure oversampling */
+      Adafruit_BMP280::FILTER_X2,       /* Filtering. */
+      Adafruit_BMP280::STANDBY_MS_250); /* Standby time. */
+  
+  Serial.print(" - Temperature: ");Serial.print(sensor.readTemperature());Serial.println(" C°");
+  baseAirPressure = sensor.readPressure() / 100.0;
+  Serial.print(" - Pressure: ");Serial.print(baseAirPressure);Serial.println(" hPa");
+
+
+  Serial.println("done!\n");
+  return true;
 }
 
-void FrSkySportSensorBMP280::setup()
+void FrSkySportSensorBMP280::UpdateSensorData(){
+  AirPressure = sensor.readPressure() / 100.0;
+  RelativeAltitude = sensor.readAltitude(baseAirPressure);
+  Temperature = sensor.readTemperature();
+}
+
+/*void FrSkySportSensorBMP280::setup()
 {
   Serial.println("Initialize BMP280...");
 
   if (bmp280sensor.begin(0x76))
   {
-    /* Default settings from datasheet. */
-    bmp280sensor.setSampling(
-      Adafruit_BMP280::MODE_NORMAL,     /* Operating Mode. */
-      Adafruit_BMP280::SAMPLING_X2,     /* Temp. oversampling */
-      Adafruit_BMP280::SAMPLING_X16,    /* Pressure oversampling */
-      Adafruit_BMP280::FILTER_X16,      /* Filtering. */
-      Adafruit_BMP280::STANDBY_MS_500); /* Standby time. */
+
 
     temperature = bmp280sensor.readTemperature();
     Serial.print(" - temperature (C): ");
@@ -40,9 +57,9 @@ void FrSkySportSensorBMP280::setup()
     Serial.println("No BMP280 sensor was found");
     Serial.println("failed!\n");
   }
-}
+}*/
 
-void FrSkySportSensorBMP280::calibrate()
+/*void FrSkySportSensorBMP280::calibrate()
 {
   baseLinePressure = bmp280sensor.readPressure() / 100;
   Serial.print(" - set as base line pressure: ");
@@ -118,3 +135,4 @@ uint16_t FrSkySportSensorBMP280::decodeData(uint8_t id, uint16_t appId, uint32_t
 {
   return SENSOR_NO_DATA_ID;
 }
+*/

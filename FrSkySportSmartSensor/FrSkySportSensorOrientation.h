@@ -2,6 +2,11 @@
 #define _FRSKY_SPORT_SENSOR_ORIENTATION_H_
 
 #include "FrSkySportSensor.h"
+
+#include "HardwareAccelerationSensor.h"
+#include "HardwareGyroSensor.h"
+#include "HardwareMagneticSensor.h"
+
 #include <Kalman.h>
 #include <MadgwickAHRS.h>
 
@@ -25,18 +30,26 @@ class FrSkySportSensorOrientation : public FrSkySportSensor
     FrSkySportSensorOrientation(SensorId id = ORIENTATION_DEFAULT_ID);
     uint16_t send(FrSkySportSingleWireSerial &serial, uint8_t id, uint32_t now);
     uint16_t decodeData(uint8_t id, uint16_t appId, uint32_t data);
-    void setup();
     void loop();
+    void Setup(HardwareAccelerationSensor* accelerationSensor, HardwareGyroSensor* gyroSensor =  NULL, HardwareMagneticSensor* magneticSensor =  NULL);
 
   protected:
-    virtual void readSensorData();
-    virtual uint16_t getSampleRate();
     bool sensorInitialized;           // true if setting up the sensor was successful
     double accX, accY, accZ;          // acceleration data of the sensor
     double gyroX, gyroY, gyroZ;       // gyro data of the sensor
     double magnetometerX, magnetometerY, magnetometerZ;       // magnetometer data of the sensor
 
+    HardwareAccelerationSensor* accelerationSensor;
+    HardwareGyroSensor* gyroSensor;
+    HardwareMagneticSensor* magneticSensor;
+
   private:
+
+
+
+
+
+
     void readAndCalculate();
     double getRoll();
     double getPitch();

@@ -77,16 +77,12 @@ uint16_t FrSkySportSensorOrientation::decodeData(uint8_t id, uint16_t appId, uin
   return SENSOR_NO_DATA_ID;
 }
 
-void FrSkySportSensorOrientation::readSensorData() {}
+void FrSkySportSensorOrientation::Setup(HardwareAccelerationSensor* accelerationSensor, HardwareGyroSensor* gyroSensor, HardwareMagneticSensor* magneticSensor =  NULL) {
+  this->accelerationSensor = accelerationSensor;
+  this->gyroSensor = gyroSensor;
+  this->magneticSensor = magneticSensor;
 
-uint16_t FrSkySportSensorOrientation::getSampleRate() {
-  return 0;
-}
-
-void FrSkySportSensorOrientation::setup() {
-  delay(100); // Wait for sensor to stabilize
-
-  readSensorData();
+  /*readSensorData();
 
   double roll = getRoll();
   double pitch = getPitch();
@@ -110,7 +106,7 @@ void FrSkySportSensorOrientation::setup() {
   Serial.print(" - Roll (y): "); Serial.print(roll); Serial.println("°");
   Serial.print(" - Pitch (z): "); Serial.print(pitch); Serial.println("°");
 
-  deltaTime = micros();
+  deltaTime = micros();*/
 }
 
 void FrSkySportSensorOrientation::loop()
@@ -125,7 +121,7 @@ void FrSkySportSensorOrientation::loop()
   Serial.print("yaw: "); Serial.println(filter.getYaw());
   Serial.println("");*/
 
-  readSensorData();
+  //readSensorData();
 
   // Hold the module so that Z is pointing 'up' and you can measure the heading with x&y
   // Calculate heading when the magnetometer is level, then correct for signs of axis.
@@ -155,7 +151,7 @@ void FrSkySportSensorOrientation::loop()
 
 void FrSkySportSensorOrientation::readAndCalculate()
 {
-  readSensorData();
+  //readSensorData();
 
   double dt = (double)(micros() - deltaTime) / 1000000; // Calculate delta time
   deltaTime = micros();

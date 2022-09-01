@@ -21,6 +21,7 @@
 #include "FrSkySportSensorMPU6050.h"
 #include "FrSkySportSensorLSM6DS3.h"
 #include "FrSkySportSensorHMC5883L.h"
+#include "FrSkySportSensorOrientation.h"
 #include "FrSkySportSingleWireSerial.h"
 #include "FrSkySportTelemetry.h"
 #if !defined(TEENSY_HW)
@@ -36,6 +37,7 @@ FrSkySportSensorLSM303A lsm303a;
 FrSkySportSensorMPU6050 mpu6050;
 FrSkySportSensorLSM6DS3 lsm6ds3;
 FrSkySportSensorHMC5883L hmc5883l;
+FrSkySportSensorOrientation orientationSensor;
 #ifdef POLLING_ENABLED
 #include "FrSkySportPollingDynamic.h"
 FrSkySportTelemetry telemetry(new FrSkySportPollingDynamic()); // Create telemetry object with dynamic (FrSky-like) polling
@@ -71,9 +73,9 @@ void setup()
   Serial.print("Initialize Smart Port...\n");
   // Configure the telemetry serial port and sensors (remember to use & to specify a pointer to sensor)
 #if defined(TEENSY_HW)
-  telemetry.begin(FrSkySportSingleWireSerial::SERIAL_3);
+  telemetry.begin(FrSkySportSingleWireSerial::SERIAL_3, &orientationSensor);
 #else
-  telemetry.begin(FrSkySportSingleWireSerial::SOFT_SERIAL_PIN_12);
+  telemetry.begin(FrSkySportSingleWireSerial::SOFT_SERIAL_PIN_12, &orientationSensor);
 #endif
   Serial.println("done!\n");
 
@@ -84,6 +86,11 @@ void setup()
   mpu6050.Setup();
   lsm6ds3.Setup();
   hmc5883l.Setup();
+
+  HardwareAccelerationSensor *accelerationSensor = &lsm6ds3; 
+  HardwareGyroSensor *gyroSensor = &lsm6ds3; 
+  HardwareMagneticSensor *magneticSensor = &lsm303m; 
+  orientationSensor.Setup(&accelerationSensor);
 
   Serial.println("setup completed!\n");
 }
@@ -108,11 +115,6 @@ void loop()
   // Send the telemetry data, note that the data will only be sent for sensors
   // that are being polled at given moment
   telemetry.send();
-
-  //mpu6050.loop();
-  //lsm6ds3.loop();
-  //lsm303magnetometer.loop();
-  //hmc5883l.loop();
 
   bmp180.UpdateSensorData();
   bmp280.UpdateSensorData();

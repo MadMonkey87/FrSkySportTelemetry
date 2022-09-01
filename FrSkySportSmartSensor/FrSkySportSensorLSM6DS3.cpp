@@ -1,10 +1,8 @@
 #include "FrSkySportSensorLSM6DS3.h"
+#include <Wire.h>
+#include <Arduino_LSM6DS3.h>
 
-//LSM6DS3Class lsm6ds3Sensor(Wire, 0x6B);
-
-FrSkySportSensorLSM6DS3::FrSkySportSensorLSM6DS3(){
-  sensor = LSM6DS3Class(Wire, 0x6B);
-}
+LSM6DS3Class sensor(Wire, 0x6B);
 
 bool FrSkySportSensorLSM6DS3::Setup()
 {
@@ -16,8 +14,8 @@ bool FrSkySportSensorLSM6DS3::Setup()
     return false;
   }
 
-  Serial.print(" - Accelerometer sample rate: "); Serial.print(lsm6ds3Sensor.accelerationSampleRate()); Serial.println("Hz");
-  Serial.print(" - Gyroscope sample rate: "); Serial.print(lsm6ds3Sensor.gyroscopeSampleRate()); Serial.println("Hz");
+  Serial.print(" - Accelerometer sample rate: "); Serial.print(sensor.accelerationSampleRate()); Serial.println("Hz");
+  Serial.print(" - Gyroscope sample rate: "); Serial.print(sensor.gyroscopeSampleRate()); Serial.println("Hz");
 
   if(!sensor.accelerationAvailable()){
       Serial.println(" - unable to read from the acceleration sensor");

@@ -1,16 +1,21 @@
 #ifndef _FRSKY_SPORT_SENSOR_LSM6DS3_H_
 #define _FRSKY_SPORT_SENSOR_LSM6DS3_H_
 
-#include "FrSkySportSensorOrientation.h"
+#include <Arduino_LSM6DS3.h>
 
-class FrSkySportSensorLSM6DS3 : public FrSkySportSensorOrientation
+#include "HardwareAccelerationSensor.h"
+#include "HardwareGyroSensor.h"
+
+class FrSkySportSensorLSM6DS3 : public HardwareAccelerationSensor, public HardwareGyroSensor
 {
   public:
-    FrSkySportSensorLSM6DS3(SensorId id = ORIENTATION_DEFAULT_ID);
-    void setup();
+  FrSkySportSensorLSM6DS3();
+    bool Setup();
+    void UpdateSensorData();
+
   private:
-    void readSensorData();
-    uint16_t getSampleRate();
+    LSM6DS3Class sensor;
+
 };
 
 #endif

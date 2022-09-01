@@ -1,26 +1,23 @@
 #include "FrSkySportSensorMPU6050.h"
-#include <Adafruit_MPU6050.h>
 
-Adafruit_MPU6050 mpu;
-Adafruit_Sensor *mpu_temp, *mpu_accel, *mpu_gyro;
-
-FrSkySportSensorMPU6050::FrSkySportSensorMPU6050(SensorId id) : FrSkySportSensorOrientation(id) {}
-
-void FrSkySportSensorMPU6050::setup()
+bool FrSkySportSensorMPU6050::Setup()
 {
   Serial.println("Initialize MPU6050...");
 
-  sensorInitialized = mpu.begin();
-  if (sensorInitialized)
+  if (!mpu.begin())
   {
-    mpu_temp = mpu.getTemperatureSensor();
-    mpu_temp->printSensorDetails();
+    Serial.println("failed!");
+    return false;
+  }
 
-    mpu_accel = mpu.getAccelerometerSensor();
-    mpu_accel->printSensorDetails();
+  temperatureSensor = mpu.getTemperatureSensor();
+    temperatureSensor->printSensorDetails();
 
-    mpu_gyro = mpu.getGyroSensor();
-    mpu_gyro->printSensorDetails();
+    accelerationSensor = mpu.getAccelerometerSensor();
+    accelerationSensor->printSensorDetails();
+
+    gyroSensor = mpu.getGyroSensor();
+    gyroSensor->printSensorDetails();
 
     mpu.setAccelerometerRange(MPU6050_RANGE_8_G);
     Serial.print(" - Accelerometer range set to: ");
@@ -84,47 +81,20 @@ void FrSkySportSensorMPU6050::setup()
         break;
     }
 
-    FrSkySportSensorOrientation::setup();
+  Serial.println("done!\n");
 
-    Serial.println("done!\n");
-  }
-  else
-  {
-    Serial.println("failed!\n");
-  }
+  return true;
 }
 
-void FrSkySportSensorMPU6050::readSensorData() {
-  sensors_event_t acceleration;
-  mpu_accel->getEvent(&acceleration);
-  accX = acceleration.acceleration.x;
-  accY = acceleration.acceleration.y;
-  accZ = acceleration.acceleration.z;
+void FrSkySportSensorMPU6050::UpdateSensorData()
+{
+  sensors_event_t event;
 
-  sensors_event_t gyro;
-  mpu_gyro->getEvent(&gyro);
-  gyroX = gyro.acceleration.x;
-  gyroY = gyro.acceleration.y;
-  gyroZ = gyro.acceleration.z;
-}
+  accelerationSensor->getEvent(&event);
+  AccelerationX = event.acceleration.x;
+  AccelerationY = event.acceleration.y;
+  AccelerationZ = event.acceleration.z;
 
-uint16_t FrSkySportSensorMPU6050::getSampleRate() {
-  switch (mpu.getFilterBandwidth())
-  {
-    case MPU6050_BAND_260_HZ:
-      return 260;
-    case MPU6050_BAND_184_HZ:
-      return 184;
-    case MPU6050_BAND_94_HZ:
-      return 94;
-    case MPU6050_BAND_44_HZ:
-      return 44;
-    case MPU6050_BAND_21_HZ:
-      return 21;
-    case MPU6050_BAND_10_HZ:
-      return 10;
-    case MPU6050_BAND_5_HZ:
-      return 5;
-  }
-  return 0;
+  temperatureSensor->getEvent(&event);
+  Temperature = event.temperature;
 }

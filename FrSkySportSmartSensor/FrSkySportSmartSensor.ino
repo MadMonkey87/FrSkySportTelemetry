@@ -16,7 +16,8 @@
 #include "SBusListener.h"
 #include "FrSkySportSensorBMP180.h"
 #include "FrSkySportSensorBMP280.h"
-#include "FrSkySportSensorLSM303Magnet.h"
+#include "FrSkySportSensorLSM303M.h"
+#include "FrSkySportSensorLSM303A.h"
 #include "FrSkySportSensorMPU6050.h"
 #include "FrSkySportSensorLSM6DS3.h"
 #include "FrSkySportSensorHMC5883L.h"
@@ -30,7 +31,8 @@ I2CScanner i2cScanner;
 SBusListener sbusListener;
 FrSkySportSensorBMP180 bmp180;
 FrSkySportSensorBMP280 bmp280;
-FrSkySportSensorLSM303Magnet lsm303magnetometer;
+FrSkySportSensorLSM303M lsm303m;
+FrSkySportSensorLSM303A lsm303a;
 FrSkySportSensorMPU6050 mpu6050;
 FrSkySportSensorLSM6DS3 lsm6ds3;
 FrSkySportSensorHMC5883L hmc5883l;
@@ -69,16 +71,17 @@ void setup()
   Serial.print("Initialize Smart Port...\n");
   // Configure the telemetry serial port and sensors (remember to use & to specify a pointer to sensor)
 #if defined(TEENSY_HW)
-  telemetry.begin(FrSkySportSingleWireSerial::SERIAL_3, &lsm303magnetometer, &mpu6050, &lsm6ds3, &hmc5883l);
+  telemetry.begin(FrSkySportSingleWireSerial::SERIAL_3, &lsm6ds3, &hmc5883l);
 #else
-  telemetry.begin(FrSkySportSingleWireSerial::SOFT_SERIAL_PIN_12, &lsm303magnetometer, &mpu6050, &lsm6ds3, &hmc5883l);
+  telemetry.begin(FrSkySportSingleWireSerial::SOFT_SERIAL_PIN_12, &lsm6ds3, &hmc5883l);
 #endif
   Serial.println("done!\n");
 
   bmp180.Setup();
   bmp280.Setup();
-  lsm303magnetometer.setup();
-  mpu6050.setup();
+  lsm303m.Setup();
+  lsm303a.Setup();
+  mpu6050.Setup();
   lsm6ds3.setup();
   hmc5883l.setup();
 
@@ -113,6 +116,9 @@ void loop()
 
   bmp180.UpdateSensorData();
   bmp280.UpdateSensorData();
-  Serial.print("bpm180:");Serial.print(bmp180.RelativeAltitude);Serial.print(" bpm280:");Serial.println(bmp280.RelativeAltitude);
-  //Serial.print("bpm180:");Serial.print(bmp180.Temperature);Serial.print(" bpm280:");Serial.println(bmp280.Temperature);
+  lsm303m.UpdateSensorData();
+  lsm303a.UpdateSensorData();
+  mpu6050.UpdateSensorData();
+  //Serial.print("bpm180:");Serial.print(bmp180.RelativeAltitude);Serial.print(" bpm280:");Serial.println(bmp280.RelativeAltitude);
+  Serial.print("mpu6050:");Serial.print(mpu6050.Temperature);Serial.print("bpm180:");Serial.print(bmp180.Temperature);Serial.print(" bpm280:");Serial.println(bmp280.Temperature);
 }

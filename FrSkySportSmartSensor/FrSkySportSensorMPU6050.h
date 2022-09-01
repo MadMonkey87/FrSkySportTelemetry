@@ -1,17 +1,21 @@
 #ifndef _FRSKY_SPORT_SENSOR_MPU6050_H_
 #define _FRSKY_SPORT_SENSOR_MPU6050_H_
 
-#include "FrSkySportSensorOrientation.h"
+#include <Adafruit_MPU6050.h>
 
-class FrSkySportSensorMPU6050 : public FrSkySportSensorOrientation
+#include "HardwareAccelerationSensor.h"
+#include "HardwareTemperatureSensor.h"
+
+class FrSkySportSensorMPU6050 : public HardwareAccelerationSensor, public HardwareTemperatureSensor
 {
   public:
-    FrSkySportSensorMPU6050(SensorId id = ORIENTATION_DEFAULT_ID);
-    void setup();
+    bool Setup();
+    void UpdateSensorData();
 
   private:
-    void readSensorData();
-    uint16_t getSampleRate();
+    Adafruit_MPU6050 mpu;
+    Adafruit_Sensor *temperatureSensor, *accelerationSensor, *gyroSensor;
+
 };
 
 #endif

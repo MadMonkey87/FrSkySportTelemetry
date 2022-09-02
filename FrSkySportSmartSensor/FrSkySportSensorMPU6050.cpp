@@ -6,7 +6,7 @@ bool FrSkySportSensorMPU6050::Setup()
 
   if (!mpu.begin())
   {
-    Serial.println("failed!");
+    Serial.println("failed!\n");
     return false;
   }
 

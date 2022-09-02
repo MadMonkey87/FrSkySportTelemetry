@@ -10,7 +10,7 @@ bool FrSkySportSensorLSM6DS3::Setup()
 
   if (!sensor.begin())
   {
-    Serial.println("failed!");
+    Serial.println("failed!\n");
     return false;
   }
 

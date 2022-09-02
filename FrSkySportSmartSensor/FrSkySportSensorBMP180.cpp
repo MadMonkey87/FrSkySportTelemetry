@@ -4,7 +4,7 @@ bool FrSkySportSensorBMP180::Setup(){
   Serial.println("Initialize BMP085/BMP180...");
   
   if (!sensor.begin()){
-    Serial.println("failed!");
+    Serial.println("failed!\n");
     return false;
   }
   

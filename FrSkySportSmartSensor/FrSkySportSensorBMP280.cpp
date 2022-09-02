@@ -5,7 +5,7 @@ bool FrSkySportSensorBMP280::Setup(){
   Serial.println("Initialize BMP280...");
   
   if (!sensor.begin(0x76)){
-    Serial.println("failed!");
+    Serial.println("failed!\n");
     return false;
   }
 

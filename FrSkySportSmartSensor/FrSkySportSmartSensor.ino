@@ -21,6 +21,7 @@
 #include "FrSkySportSensorMPU6050.h"
 #include "FrSkySportSensorLSM6DS3.h"
 #include "FrSkySportSensorHMC5883L.h"
+#include "FrSkySportSensorTeensy40Temperature.h";
 #include "FrSkySportSensorOrientation.h"
 #include "FrSkySportSingleWireSerial.h"
 #include "FrSkySportTelemetry.h"
@@ -37,6 +38,7 @@ FrSkySportSensorLSM303A lsm303a;
 FrSkySportSensorMPU6050 mpu6050;
 FrSkySportSensorLSM6DS3 lsm6ds3;
 FrSkySportSensorHMC5883L hmc5883l;
+FrSkySportSensorTeensy40Temperature t40t;
 FrSkySportSensorOrientation orientationSensor;
 #ifdef POLLING_ENABLED
 #include "FrSkySportPollingDynamic.h"
@@ -51,20 +53,30 @@ unsigned long lastLoopTime = millis();
 
 void setup()
 {
+
+  delay(1000);
+
   Serial.println("Booting SmartPort multi sensor");
-  Serial.println("v0.1 Alpha");
-  Serial.print("Compile time: ");Serial.println(__TIMESTAMP__);
+  Serial.println(" - v0.1 Alpha");
+  Serial.print(" - Compile time: "); Serial.println(__TIMESTAMP__);
 
 #if defined(DEBUG)
-  Serial.println("Debug: yes");
+  Serial.println(" - Debug: yes");
 #else
-  Serial.println("Debug: no");
+  Serial.println(" - Debug: no");
 #endif
 #if defined(TEENSY_HW)
-  Serial.println("Running on teensy: yes");
+  Serial.println(" - Running on teensy: yes");
+
 #else
-  Serial.println("Running on teensy: no\n");
+  Serial.println(" - Running on teensy: no\n");
 #endif
+#if defined(F_CPU)
+  Serial.print(" - Target clockspeed: "); Serial.print(F_CPU / 1000000); Serial.println(" Mhz");
+#endif
+  Serial.print(" - Actual clockspeed: "); Serial.print(F_CPU_ACTUAL / 1000000); Serial.println(" Mhz");
+  Serial.print(" - Actual bus speed: "); Serial.print(F_BUS_ACTUAL / 1000000); Serial.println(" Mhz");
+  Serial.println("");
 
   i2cScanner.scan();
 
@@ -86,9 +98,10 @@ void setup()
   mpu6050.Setup();
   lsm6ds3.Setup();
   hmc5883l.Setup();
+  t40t.Setup();
 
-  HardwareAccelerationSensor *accelerationSensor = &lsm6ds3; 
-  HardwareGyroSensor *gyroSensor = &lsm6ds3; 
+  HardwareAccelerationSensor *accelerationSensor = &lsm6ds3;
+  HardwareGyroSensor *gyroSensor = &lsm6ds3;
   HardwareMagneticSensor *magneticSensor = &lsm303m;
   orientationSensor.Setup(accelerationSensor, gyroSensor, magneticSensor);
 
@@ -123,6 +136,7 @@ void loop()
   mpu6050.UpdateSensorData();
   hmc5883l.UpdateSensorData();
   lsm6ds3.UpdateSensorData();
+  t40t.UpdateSensorData();
   //Serial.print("bpm180:");Serial.print(bmp180.RelativeAltitude);Serial.print(" bpm280:");Serial.println(bmp280.RelativeAltitude);
   //Serial.print("mpu6050:");Serial.print(mpu6050.Temperature);Serial.print(" bpm180:");Serial.print(bmp180.Temperature);Serial.print(" bpm280:");Serial.println(bmp280.Temperature);
 }

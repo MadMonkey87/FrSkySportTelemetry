@@ -11,7 +11,8 @@ class FrSkySportSensorHMC5883L : public HardwareMagneticSensor
     FrSkySportSensorHMC5883L();
     bool Setup();
     void UpdateSensorData();
-
+    bool Ready;
+    
   private:
     Adafruit_HMC5883_Unified sensor;
 };

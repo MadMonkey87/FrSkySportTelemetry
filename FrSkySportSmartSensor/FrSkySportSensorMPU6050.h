@@ -11,6 +11,7 @@ class FrSkySportSensorMPU6050 : public HardwareAccelerationSensor, public Hardwa
   public:
     bool Setup();
     void UpdateSensorData();
+    bool Ready;
 
   private:
     Adafruit_MPU6050 mpu;

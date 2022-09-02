@@ -20,12 +20,16 @@ bool FrSkySportSensorBMP280::Setup(){
   baseAirPressure = sensor.readPressure() / 100.0;
   Serial.print(" - Pressure: ");Serial.print(baseAirPressure);Serial.println(" hPa");
 
-
+  this->Ready = true;
   Serial.println("done!\n");
   return true;
 }
 
 void FrSkySportSensorBMP280::UpdateSensorData(){
+  if(!this->Ready){
+    return;
+  }
+
   AirPressure = sensor.readPressure() / 100.0;
   RelativeAltitude = sensor.readAltitude(baseAirPressure);
   Temperature = sensor.readTemperature();

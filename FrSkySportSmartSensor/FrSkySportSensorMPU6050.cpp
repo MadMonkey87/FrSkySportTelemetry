@@ -81,13 +81,17 @@ bool FrSkySportSensorMPU6050::Setup()
         break;
     }
 
+  this->Ready = true;
   Serial.println("done!\n");
-
   return true;
 }
 
 void FrSkySportSensorMPU6050::UpdateSensorData()
 {
+  if(!this->Ready){
+    return;
+  }
+
   sensors_event_t event;
 
   accelerationSensor->getEvent(&event);

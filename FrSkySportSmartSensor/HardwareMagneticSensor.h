@@ -1,11 +1,11 @@
 #ifndef _HARDWARE_MAGNETIC_SENSOR_H_
 #define _HARDWARE_MAGNETIC_SENSOR_H_
 
-class HardwareMagneticSensor
+#include "HardwareSensor.h"
+
+class HardwareMagneticSensor: public HardwareSensor
 {
   public:
-    virtual bool Setup();
-    virtual void UpdateSensorData();
     double MagneticX, MagneticY, MagneticZ; 
 };
 

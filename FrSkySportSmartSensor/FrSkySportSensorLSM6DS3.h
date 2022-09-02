@@ -9,7 +9,7 @@ class FrSkySportSensorLSM6DS3 : public HardwareAccelerationSensor, public Hardwa
   public:
     bool Setup();
     void UpdateSensorData();
-    
+    bool Ready;
 };
 
 #endif

@@ -29,13 +29,17 @@ bool FrSkySportSensorLSM6DS3::Setup()
       return false;
   }
 
+  this->Ready = true;
   Serial.println("done!\n");
-
   return true;
 }
 
 void FrSkySportSensorLSM6DS3::UpdateSensorData()
 {
+  if(!this->Ready){
+    return;
+  }
+
   float x, y, z;
 
   sensor.readAcceleration(x, y, z);

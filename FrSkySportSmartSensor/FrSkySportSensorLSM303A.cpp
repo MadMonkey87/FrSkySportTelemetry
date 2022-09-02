@@ -34,13 +34,17 @@ bool FrSkySportSensorLSM303A::Setup()
   Serial.print(sensorDetails.resolution);
   Serial.println(" m/s^2");
 
+  Ready = true;
   Serial.println("done!\n");
-
   return true;
 }
 
 void FrSkySportSensorLSM303A::UpdateSensorData()
 {
+  if(!Ready){
+    return;
+  }
+
   sensors_event_t event;
   sensor.getEvent(&event);
   AccelerationX = event.acceleration.x;

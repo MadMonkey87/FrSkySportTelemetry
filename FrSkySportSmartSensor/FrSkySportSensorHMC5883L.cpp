@@ -43,13 +43,17 @@ bool FrSkySportSensorHMC5883L::Setup()
   Serial.print(MagneticZ);
   Serial.println(" uT");
 
+  Ready = true;
   Serial.println("done!\n");
-  
   return true;
 }
 
 void FrSkySportSensorHMC5883L::UpdateSensorData()
 {
+  if(!Ready){
+    return;
+  }
+
   sensors_event_t event;
   sensor.getEvent(&event);
   MagneticX = event.magnetic.x;

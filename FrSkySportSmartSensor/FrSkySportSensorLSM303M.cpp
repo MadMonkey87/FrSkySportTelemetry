@@ -43,13 +43,17 @@ bool FrSkySportSensorLSM303M::Setup()
   Serial.print(MagneticZ);
   Serial.println(" uT");
 
+  Ready = true;
   Serial.println("done!\n");
-  
   return true;
 }
 
 void FrSkySportSensorLSM303M::UpdateSensorData()
 {
+  if(!Ready){
+    return;
+  }
+
   sensors_event_t event;
   sensor.getEvent(&event);
   MagneticX = event.magnetic.x;

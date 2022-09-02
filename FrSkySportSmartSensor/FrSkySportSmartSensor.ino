@@ -51,8 +51,8 @@ unsigned long lastLoopTime = millis();
 
 void setup()
 {
-  Serial.println("Booting SmartPort multi sensor\n");
-  Serial.println("v0.1 Alpha\n");
+  Serial.println("Booting SmartPort multi sensor");
+  Serial.println("v0.1 Alpha");
   Serial.print("Compile time: ");Serial.println(__TIMESTAMP__);
 
 #if defined(DEBUG)
@@ -89,8 +89,8 @@ void setup()
 
   HardwareAccelerationSensor *accelerationSensor = &lsm6ds3; 
   HardwareGyroSensor *gyroSensor = &lsm6ds3; 
-  HardwareMagneticSensor *magneticSensor = &lsm303m; 
-  orientationSensor.Setup(&accelerationSensor);
+  HardwareMagneticSensor *magneticSensor = &lsm303m;
+  orientationSensor.Setup(accelerationSensor, gyroSensor, magneticSensor);
 
   Serial.println("setup completed!\n");
 }
@@ -124,5 +124,5 @@ void loop()
   hmc5883l.UpdateSensorData();
   lsm6ds3.UpdateSensorData();
   //Serial.print("bpm180:");Serial.print(bmp180.RelativeAltitude);Serial.print(" bpm280:");Serial.println(bmp280.RelativeAltitude);
-  //Serial.print("mpu6050:");Serial.print(mpu6050.Temperature);Serial.print("bpm180:");Serial.print(bmp180.Temperature);Serial.print(" bpm280:");Serial.println(bmp280.Temperature);
+  //Serial.print("mpu6050:");Serial.print(mpu6050.Temperature);Serial.print(" bpm180:");Serial.print(bmp180.Temperature);Serial.print(" bpm280:");Serial.println(bmp280.Temperature);
 }

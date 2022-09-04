@@ -10,47 +10,45 @@ I2CScanner::I2CScanner()
 
 void I2CScanner::scan()
 {
-    WIRE.begin();
+  WIRE.begin();
 
-    byte error, address;
-    int nDevices;
+  byte error, address;
+  int nDevices;
 
-    Serial.println("Scanning for I2C devices...");
+  Serial.println("Scanning for I2C devices...");
 
-    nDevices = 0;
-    for (address = 1; address < 127; address++)
+  nDevices = 0;
+  for (address = 1; address < 127; address++)
+  {
+    // The i2c_scanner uses the return value of
+    // the Write.endTransmisstion to see if
+    // a device did acknowledge to the address.
+    WIRE.beginTransmission(address);
+    error = WIRE.endTransmission();
+
+    if (error == 0)
     {
-        // The i2c_scanner uses the return value of
-        // the Write.endTransmisstion to see if
-        // a device did acknowledge to the address.
-        WIRE.beginTransmission(address);
-        error = WIRE.endTransmission();
+      Serial.print(" - I2C device found at address 0x");
+      if (address < 16)
+        Serial.print("0");
+      Serial.println(address, HEX);
 
-        if (error == 0)
-        {
-            Serial.print(" - I2C device found at address 0x");
-            if (address < 16)
-                Serial.print("0");
-            Serial.println(address, HEX);
-
-            nDevices++;
-        }
-        else if (error == 4)
-        {
-            Serial.print(" - Unknown error at address 0x");
-            if (address < 16)
-                Serial.print("0");
-            Serial.println(address, HEX);
-        }
+      nDevices++;
     }
-    if (nDevices == 0)
+    else if (error == 4)
     {
-        Serial.println("no I2C devices found\n");
+      Serial.print(" - Unknown error at address 0x");
+      if (address < 16)
+        Serial.print("0");
+      Serial.println(address, HEX);
     }
-    else
-    {
-        Serial.println("scanning completed!\n");
-    }
+  }
+  if (nDevices == 0)
+  {
+    Serial.println(" - no I2C devices found\n");
+  }
 
-    WIRE.end();
+  Serial.println("scanning completed!\n");
+
+  WIRE.end();
 }

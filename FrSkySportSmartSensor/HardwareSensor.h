@@ -5,8 +5,10 @@ class HardwareSensor
 {
   public:
     virtual bool Setup();
-    virtual void UpdateSensorData(); 
+    virtual void UpdateSensorData();
     bool Ready;
+
+    virtual bool IsHardwareTemperatureSensor();
 };
 
 #endif

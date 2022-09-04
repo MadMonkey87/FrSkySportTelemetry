@@ -21,7 +21,7 @@
 #include "FrSkySportSensorMPU6050.h"
 #include "FrSkySportSensorLSM6DS3.h"
 #include "FrSkySportSensorHMC5883L.h"
-#include "FrSkySportSensorTeensy40Temperature.h";
+#include "FrSkySportSensorTeensy40Temperature.h"
 #include "FrSkySportSensorOrientation.h"
 #include "FrSkySportSingleWireSerial.h"
 #include "FrSkySportTelemetry.h"
@@ -91,13 +91,6 @@ void setup()
 #endif
   Serial.println("done!\n");
 
-
-
-
-
-
-
-
   bmp180.Setup();
   bmp280.Setup();
   lsm303m.Setup();
@@ -108,17 +101,21 @@ void setup()
   t40t.Setup();
 
 
+t40t.UpdateSensorData();
 
 
 
 
 
-HardwareSensor& AnimalRef2 = t40t;
-HardwareSensor* AnimlaPtr2 = &t40t;
+  void* ptr = &bmp180;
 
+  HardwareTemperatureSensor x = *(HardwareTemperatureSensor*)ptr;
+Serial.println(x.Temperature);
 
+  
+  //Serial.println(&foo->Temperature);
 
-
+  //Serial.println( (*(HardwareTemperatureSensor*)ptr).       );
 
 
 

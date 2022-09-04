@@ -20,6 +20,7 @@ class FrSkySportSensorBMP280 : public HardwareAirPressureSensor, public Hardware
     virtual bool Setup();
     virtual void UpdateSensorData();
     bool Ready;
+
     /*FrSkySportSensorBMP280(SensorId id = BMP280_DEFAULT_ID);
     void setup();
     void calibrate();

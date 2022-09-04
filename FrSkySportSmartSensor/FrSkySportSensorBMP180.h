@@ -9,8 +9,8 @@
 class FrSkySportSensorBMP180 : public HardwareAirPressureSensor, public HardwareTemperatureSensor
 {
   public:
-    bool Setup();
-    void UpdateSensorData();
+    virtual bool Setup();
+    virtual void UpdateSensorData();
     bool Ready;
     
   private:

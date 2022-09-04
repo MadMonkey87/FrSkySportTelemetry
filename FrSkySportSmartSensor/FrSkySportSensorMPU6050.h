@@ -9,8 +9,8 @@
 class FrSkySportSensorMPU6050 : public HardwareAccelerationSensor, public HardwareTemperatureSensor
 {
   public:
-    bool Setup();
-    void UpdateSensorData();
+    virtual bool Setup();
+    virtual void UpdateSensorData();
     bool Ready;
 
   private:

@@ -9,8 +9,8 @@ class FrSkySportSensorLSM303A : public HardwareAccelerationSensor
 {
   public:
     FrSkySportSensorLSM303A();
-    bool Setup();
-    void UpdateSensorData();
+    virtual bool Setup();
+    virtual void UpdateSensorData();
 
   private:
     Adafruit_LSM303_Accel_Unified sensor;

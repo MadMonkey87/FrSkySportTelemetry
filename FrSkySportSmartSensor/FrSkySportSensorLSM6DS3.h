@@ -7,8 +7,8 @@
 class FrSkySportSensorLSM6DS3 : public HardwareAccelerationSensor, public HardwareGyroSensor
 {
   public:
-    bool Setup();
-    void UpdateSensorData();
+    virtual bool Setup();
+    virtual void UpdateSensorData();
     bool Ready;
 };
 

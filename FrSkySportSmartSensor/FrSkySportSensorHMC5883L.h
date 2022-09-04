@@ -9,8 +9,8 @@ class FrSkySportSensorHMC5883L : public HardwareMagneticSensor
 {
   public:
     FrSkySportSensorHMC5883L();
-    bool Setup();
-    void UpdateSensorData();
+    virtual bool Setup();
+    virtual void UpdateSensorData();
     bool Ready;
     
   private:

@@ -91,6 +91,13 @@ void setup()
 #endif
   Serial.println("done!\n");
 
+
+
+
+
+
+
+
   bmp180.Setup();
   bmp280.Setup();
   lsm303m.Setup();
@@ -99,6 +106,22 @@ void setup()
   lsm6ds3.Setup();
   hmc5883l.Setup();
   t40t.Setup();
+
+
+
+
+
+
+
+HardwareSensor& AnimalRef2 = t40t;
+HardwareSensor* AnimlaPtr2 = &t40t;
+
+
+
+
+
+
+
 
   HardwareAccelerationSensor *accelerationSensor = &lsm6ds3;
   HardwareGyroSensor *gyroSensor = &lsm6ds3;

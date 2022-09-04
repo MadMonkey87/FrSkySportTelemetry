@@ -107,7 +107,7 @@ t40t.UpdateSensorData();
 
 
 
-  void* ptr = &bmp180;
+  void* ptr = &t40t;
 
   HardwareTemperatureSensor x = *(HardwareTemperatureSensor*)ptr;
 Serial.println(x.Temperature);

@@ -7,6 +7,9 @@ class HardwareGyroSensor: public HardwareSensor
 {
   public:
     double GyroX, GyroY, GyroZ; 
+
+    virtual bool IsHardwareGyroSensor();
+
 };
 
 #endif

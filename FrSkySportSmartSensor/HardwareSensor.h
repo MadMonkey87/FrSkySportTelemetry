@@ -9,6 +9,10 @@ class HardwareSensor
     bool Ready;
 
     virtual bool IsHardwareTemperatureSensor();
+    virtual bool IsHardwareAccelerationSensor();
+    virtual bool IsHardwareGyroSensor();
+    virtual bool IsHardwareMagneticSensor();
+    virtual bool IsHardwareAirPressureSensor();
 };
 
 #endif

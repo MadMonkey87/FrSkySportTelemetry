@@ -8,6 +8,8 @@ class HardwareAirPressureSensor: public HardwareSensor
   public:
     double AirPressure; // in hPa
     double RelativeAltitude; //in m
+
+    virtual bool IsHardwareAirPressureSensor();
 };
 
 #endif

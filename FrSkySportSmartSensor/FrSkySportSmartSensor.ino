@@ -28,6 +28,9 @@
 #if !defined(TEENSY_HW)
 #include "SoftwareSerial.h"
 #endif
+#include <List.hpp>
+
+List<HardwareSensor> hardwareSensors;
 
 I2CScanner i2cScanner;
 SBusListener sbusListener;
@@ -91,34 +94,29 @@ void setup()
 #endif
   Serial.println("done!\n");
 
-  bmp180.Setup();
-  bmp280.Setup();
-  lsm303m.Setup();
-  lsm303a.Setup();
-  mpu6050.Setup();
-  lsm6ds3.Setup();
-  hmc5883l.Setup();
-  t40t.Setup();
+  hardwareSensors.add(bmp180);
+  hardwareSensors.add(bmp280);
+  hardwareSensors.add(lsm303m);
+  hardwareSensors.add(lsm303a);
+  hardwareSensors.add(mpu6050);
+  hardwareSensors.add(lsm6ds3);
+  hardwareSensors.add(hmc5883l);
+  hardwareSensors.add(t40t);
 
-
-t40t.UpdateSensorData();
-
-
-
-
+  for (int i = 0; i < hardwareSensors.getSize(); ++i) {
+    HardwareSensor hardwareSensor = hardwareSensors[i];
+    if (hardwareSensor.Setup()) {
+      hardwareSensor.UpdateSensorData();
+    }
+  }
 
   void* ptr = &t40t;
 
   HardwareTemperatureSensor x = *(HardwareTemperatureSensor*)ptr;
-Serial.println(x.Temperature);
+  Serial.println(x.Temperature);
 
-  
   //Serial.println(&foo->Temperature);
-
   //Serial.println( (*(HardwareTemperatureSensor*)ptr).       );
-
-
-
 
   HardwareAccelerationSensor *accelerationSensor = &lsm6ds3;
   HardwareGyroSensor *gyroSensor = &lsm6ds3;

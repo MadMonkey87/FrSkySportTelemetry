@@ -4,9 +4,10 @@
 #include <Adafruit_MPU6050.h>
 
 #include "HardwareAccelerationSensor.h"
+#include "HardwareGyroSensor.h"
 #include "HardwareTemperatureSensor.h"
 
-class FrSkySportSensorMPU6050 : public HardwareAccelerationSensor, public HardwareTemperatureSensor
+class FrSkySportSensorMPU6050 : public HardwareAccelerationSensor, public HardwareGyroSensor, public HardwareTemperatureSensor
 {
   public:
     virtual bool Setup();

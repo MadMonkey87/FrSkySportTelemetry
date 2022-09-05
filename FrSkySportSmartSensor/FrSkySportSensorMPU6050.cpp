@@ -95,6 +95,11 @@ void FrSkySportSensorMPU6050::UpdateSensorData()
   AccelerationY = event.acceleration.y;
   AccelerationZ = event.acceleration.z;
 
+  gyroSensor->getEvent(&event);
+  GyroX = event.gyro.x;
+  GyroY = event.gyro.y;
+  GyroZ = event.gyro.z;
+
   temperatureSensor->getEvent(&event);
   Temperature = event.temperature;
 }

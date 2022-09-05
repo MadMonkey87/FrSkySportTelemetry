@@ -2,10 +2,7 @@
 #include <Wire.h>
 
 bool FrSkySportSensorBMP280::Setup(){
-  Serial.println("Initialize BMP280...");
-  
   if (!sensor.begin(0x76)){
-    Serial.println("failed!\n");
     return false;
   }
 
@@ -15,13 +12,10 @@ bool FrSkySportSensorBMP280::Setup(){
       Adafruit_BMP280::SAMPLING_X8,    /* Pressure oversampling */
       Adafruit_BMP280::FILTER_X2,       /* Filtering. */
       Adafruit_BMP280::STANDBY_MS_250); /* Standby time. */
-  
-  Serial.print(" - Temperature: ");Serial.print(sensor.readTemperature());Serial.println(" C°");
+      
   baseAirPressure = sensor.readPressure() / 100.0;
-  Serial.print(" - Pressure: ");Serial.print(baseAirPressure);Serial.println(" hPa");
 
   this->Ready = true;
-  Serial.println("done!\n");
   return true;
 }
 
@@ -33,6 +27,10 @@ void FrSkySportSensorBMP280::UpdateSensorData(){
   AirPressure = sensor.readPressure() / 100.0;
   RelativeAltitude = sensor.readAltitude(baseAirPressure);
   Temperature = sensor.readTemperature();
+}
+
+char* FrSkySportSensorBMP280::GetName(){
+  return "BMP280";
 }
 
 /*void FrSkySportSensorBMP280::setup()

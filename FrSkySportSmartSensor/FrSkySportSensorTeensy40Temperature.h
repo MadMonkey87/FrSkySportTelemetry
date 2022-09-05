@@ -9,6 +9,8 @@ class FrSkySportSensorTeensy40Temperature : public HardwareTemperatureSensor
     bool virtual Setup();
     void virtual UpdateSensorData();
     bool Ready;
+    virtual char* GetName();
+    
 };
 
 #endif

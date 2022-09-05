@@ -13,6 +13,7 @@ class HardwareSensor
     virtual bool IsHardwareGyroSensor();
     virtual bool IsHardwareMagneticSensor();
     virtual bool IsHardwareAirPressureSensor();
+    virtual char* GetName();
 };
 
 #endif

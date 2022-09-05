@@ -11,6 +11,7 @@ class FrSkySportSensorLSM303M : public HardwareMagneticSensor
     FrSkySportSensorLSM303M();
     virtual bool Setup();
     virtual void UpdateSensorData();
+    virtual char* GetName();
 
   private:
     Adafruit_LSM303_Mag_Unified sensor;

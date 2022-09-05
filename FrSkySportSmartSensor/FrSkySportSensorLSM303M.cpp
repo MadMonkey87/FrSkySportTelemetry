@@ -10,15 +10,12 @@ FrSkySportSensorLSM303M::FrSkySportSensorLSM303M()
 
 bool FrSkySportSensorLSM303M::Setup()
 {
-  Serial.println("Initialize LSM303M...");
-
   if (!sensor.begin())
   {
-    Serial.println("failed!\n");
     return false;
   }
 
-  sensor_t sensorDetails;
+  /*sensor_t sensorDetails;
   sensor.getSensor(&sensorDetails);
   Serial.print(" - Sensor: ");
   Serial.println(sensorDetails.name);
@@ -41,16 +38,15 @@ bool FrSkySportSensorLSM303M::Setup()
   Serial.print(MagneticY);
   Serial.print(" uT , z: ");
   Serial.print(MagneticZ);
-  Serial.println(" uT");
+  Serial.println(" uT");*/
 
-  Ready = true;
-  Serial.println("done!\n");
+  this->Ready = true;
   return true;
 }
 
 void FrSkySportSensorLSM303M::UpdateSensorData()
 {
-  if(!Ready){
+  if(!this->Ready){
     return;
   }
 
@@ -59,4 +55,8 @@ void FrSkySportSensorLSM303M::UpdateSensorData()
   MagneticX = event.magnetic.x;
   MagneticY = event.magnetic.y;
   MagneticZ = event.magnetic.z;
+}
+
+char* FrSkySportSensorLSM303M::GetName(){
+  return "LSM303M";
 }

@@ -10,15 +10,12 @@ FrSkySportSensorLSM303A::FrSkySportSensorLSM303A()
 
 bool FrSkySportSensorLSM303A::Setup()
 {
-  Serial.println("Initialize LSM303A...");
-
   if (!sensor.begin())
   {
-    Serial.println("failed!\n");
     return false;
   }
 
-  sensor_t sensorDetails;
+  /*sensor_t sensorDetails;
   sensor.getSensor(&sensorDetails);
   Serial.print(" - Sensor: ");
   Serial.println(sensorDetails.name);
@@ -32,16 +29,15 @@ bool FrSkySportSensorLSM303A::Setup()
   Serial.println(" m/s^2");
   Serial.print(" - Resolution: ");
   Serial.print(sensorDetails.resolution);
-  Serial.println(" m/s^2");
+  Serial.println(" m/s^2");*/
 
-  Ready = true;
-  Serial.println("done!\n");
+  this->Ready = true;
   return true;
 }
 
 void FrSkySportSensorLSM303A::UpdateSensorData()
 {
-  if(!Ready){
+  if(!this->Ready){
     return;
   }
 
@@ -50,4 +46,8 @@ void FrSkySportSensorLSM303A::UpdateSensorData()
   AccelerationX = event.acceleration.x;
   AccelerationY = event.acceleration.y;
   AccelerationZ = event.acceleration.z;
+}
+
+char* FrSkySportSensorLSM303A::GetName(){
+  return "LSM303A";
 }

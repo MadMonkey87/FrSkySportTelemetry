@@ -1,20 +1,13 @@
 #include "FrSkySportSensorBMP180.h"
 
 bool FrSkySportSensorBMP180::Setup(){
-  Serial.println("Initialize BMP085/BMP180...");
-  
   if (!sensor.begin()){
-    Serial.println("failed!\n");
     return false;
   }
-  
-  Serial.print(" - Temperature: ");Serial.print(sensor.readTemperature());Serial.println(" C°");
-  baseAirPressure = sensor.readPressure();
-  Serial.print(" - Pressure: ");Serial.print(baseAirPressure / 100.0);Serial.println(" hPa");
 
+  baseAirPressure = sensor.readPressure();
 
   this->Ready = true;
-  Serial.println("done!\n");
   return true;
 }
 
@@ -26,6 +19,10 @@ void FrSkySportSensorBMP180::UpdateSensorData(){
   AirPressure = sensor.readPressure() / 100.0;
   RelativeAltitude = sensor.readAltitude(baseAirPressure);
   Temperature = sensor.readTemperature();
+}
+
+char* FrSkySportSensorBMP180::GetName(){
+  return "BMP085/BMP180";
 }
 
 /*

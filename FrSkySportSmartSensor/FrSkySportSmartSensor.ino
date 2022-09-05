@@ -225,7 +225,7 @@ void setup()
     }
   }
 
-    Serial.println("\nAir pressure values:");
+  Serial.println("\nAir pressure values:");
   for (int i = 0; i < sizeof(hardwareSensors) / sizeof(hardwareSensors[0]); ++i) {
     HardwareSensor* hardwareSensor = (HardwareSensor*)hardwareSensors[i];
     if (hardwareSensor->IsHardwareAirPressureSensor()) {
@@ -253,7 +253,7 @@ void setup()
   HardwareMagneticSensor *magneticSensor = &lsm303m;
   orientationSensor.Setup(accelerationSensor, gyroSensor, magneticSensor);
 
-  Serial.println("setup completed!\n");
+  Serial.println("\nSetup completed! Start operating...");
 }
 
 void loop()
@@ -285,6 +285,11 @@ void loop()
   hmc5883l.UpdateSensorData();
   lsm6ds3.UpdateSensorData();
   t40t.UpdateSensorData();
-  //Serial.print("bpm180:");Serial.print(bmp180.RelativeAltitude);Serial.print(" bpm280:");Serial.println(bmp280.RelativeAltitude);
+
+  /*for (int i = 0; i < sizeof(hardwareSensors) / sizeof(hardwareSensors[0]); ++i) {
+    HardwareSensor* hardwareSensor = (HardwareSensor*)hardwareSensors[i];
+    hardwareSensor->UpdateSensorData();
+    }*/
+  //Serial.print("bpm180:"); Serial.print(bmp180.RelativeAltitude); Serial.print(" bpm280:"); Serial.println(bmp280.RelativeAltitude);
   //Serial.print("mpu6050:");Serial.print(mpu6050.Temperature);Serial.print(" bpm180:");Serial.print(bmp180.Temperature);Serial.print(" bpm280:");Serial.println(bmp280.Temperature);
 }

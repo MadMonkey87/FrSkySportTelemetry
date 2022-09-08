@@ -1,21 +1,27 @@
 #include "HardwareSensor.h"
 
-bool HardwareSensor::IsHardwareTemperatureSensor(){
+bool HardwareSensor::Setup() {}
+
+void HardwareSensor::UpdateSensorData() {}
+
+char* HardwareSensor::GetName() {}
+
+bool HardwareSensor::IsHardwareTemperatureSensor() {
   return false;
 }
 
-bool HardwareSensor::IsHardwareAccelerationSensor(){
+bool HardwareSensor::IsHardwareAccelerationSensor() {
   return false;
 }
 
-bool HardwareSensor::IsHardwareGyroSensor(){
+bool HardwareSensor::IsHardwareGyroSensor() {
   return false;
 }
 
-bool HardwareSensor::IsHardwareMagneticSensor(){
+bool HardwareSensor::IsHardwareMagneticSensor() {
   return false;
 }
 
-bool HardwareSensor::IsHardwareAirPressureSensor(){
+bool HardwareSensor::IsHardwareAirPressureSensor() {
   return false;
 }

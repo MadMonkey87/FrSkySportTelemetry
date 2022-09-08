@@ -15,38 +15,13 @@ bool FrSkySportSensorHMC5883L::Setup()
     return false;
   }
 
-  /*sensor_t sensorDetails;
-  sensor.getSensor(&sensorDetails);
-  Serial.print(" - Sensor: ");
-  Serial.println(sensorDetails.name);
-  Serial.print(" - Driver Ver: ");
-  Serial.println(sensorDetails.version);
-  Serial.print(" - Max Value: ");
-  Serial.print(sensorDetails.max_value);
-  Serial.println(" uT");
-  Serial.print(" - Min Value: ");
-  Serial.print(sensorDetails.min_value);
-  Serial.println(" uT");
-  Serial.print(" - Resolution: ");
-  Serial.print(sensorDetails.resolution);
-  Serial.println(" uT");*/
-
-  /*UpdateSensorData();
-  Serial.print(" - x: ");
-  Serial.print(MagneticX);
-  Serial.print(" uT , y: ");
-  Serial.print(MagneticY);
-  Serial.print(" uT , z: ");
-  Serial.print(MagneticZ);
-  Serial.println(" uT");*/
-
   this->Ready = true;
   return true;
 }
 
 void FrSkySportSensorHMC5883L::UpdateSensorData()
 {
-  if(!this->Ready){
+  if (!this->Ready) {
     return;
   }
 
@@ -57,6 +32,6 @@ void FrSkySportSensorHMC5883L::UpdateSensorData()
   MagneticZ = event.magnetic.z;
 }
 
-char* FrSkySportSensorHMC5883L::GetName(){
+char* FrSkySportSensorHMC5883L::GetName() {
   return "HMC5883L";
 }

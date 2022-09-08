@@ -13,7 +13,7 @@ class FrSkySportSensorBMP180 : public HardwareAirPressureSensor, public Hardware
     virtual void UpdateSensorData();
     bool Ready;
     virtual char* GetName();
-    
+
   private:
     Adafruit_BMP085 sensor;
     double baseAirPressure; //in Pa

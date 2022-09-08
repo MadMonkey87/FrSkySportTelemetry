@@ -11,7 +11,7 @@ class FrSkySportSensorLSM6DS3 : public HardwareAccelerationSensor, public Hardwa
     virtual void UpdateSensorData();
     bool Ready;
     virtual char* GetName();
-    
+
 };
 
 #endif

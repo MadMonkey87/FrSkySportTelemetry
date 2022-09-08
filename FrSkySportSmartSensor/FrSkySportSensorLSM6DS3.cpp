@@ -14,14 +14,14 @@ bool FrSkySportSensorLSM6DS3::Setup()
   //Serial.print(" - Accelerometer sample rate: "); Serial.print(sensor.accelerationSampleRate()); Serial.println("Hz");
   //Serial.print(" - Gyroscope sample rate: "); Serial.print(sensor.gyroscopeSampleRate()); Serial.println("Hz");
 
-  if(!sensor.accelerationAvailable()){
-      Serial.println(" - unable to read from the acceleration sensor");
-      return false;
+  if (!sensor.accelerationAvailable()) {
+    Serial.println(" - unable to read from the acceleration sensor");
+    return false;
   }
 
-    if(!sensor.gyroscopeAvailable()){
-      Serial.println(" - unable to read from the gyro sensor");
-      return false;
+  if (!sensor.gyroscopeAvailable()) {
+    Serial.println(" - unable to read from the gyro sensor");
+    return false;
   }
 
   this->Ready = true;
@@ -30,7 +30,7 @@ bool FrSkySportSensorLSM6DS3::Setup()
 
 void FrSkySportSensorLSM6DS3::UpdateSensorData()
 {
-  if(!this->Ready){
+  if (!this->Ready) {
     return;
   }
 
@@ -43,6 +43,6 @@ void FrSkySportSensorLSM6DS3::UpdateSensorData()
   GyroX = x; GyroY = y; GyroZ = z;
 }
 
-char* FrSkySportSensorLSM6DS3::GetName(){
+char* FrSkySportSensorLSM6DS3::GetName() {
   return "LSM6DS3";
 }

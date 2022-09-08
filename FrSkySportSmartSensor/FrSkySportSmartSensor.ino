@@ -25,6 +25,7 @@
 #include "FrSkySportSensorOrientation.h"
 #include "FrSkySportSingleWireSerial.h"
 #include "FrSkySportTelemetry.h"
+#include "Plotter.h"
 #if !defined(TEENSY_HW)
 #include "SoftwareSerial.h"
 #endif
@@ -40,6 +41,7 @@ FrSkySportSensorLSM6DS3 lsm6ds3;
 FrSkySportSensorHMC5883L hmc5883l;
 FrSkySportSensorTeensy40Temperature t40t;
 FrSkySportSensorOrientation orientationSensor;
+Plotter plotter;
 #ifdef POLLING_ENABLED
 #include "FrSkySportPollingDynamic.h"
 FrSkySportTelemetry telemetry(new FrSkySportPollingDynamic()); // Create telemetry object with dynamic (FrSky-like) polling
@@ -53,7 +55,6 @@ unsigned long lastLoopTime = millis();
 
 void setup()
 {
-
   delay(1000);
 
   Serial.println("Booting SmartPort multi sensor");
@@ -253,7 +254,81 @@ void setup()
   HardwareMagneticSensor *magneticSensor = &lsm303m;
   orientationSensor.Setup(accelerationSensor, gyroSensor, magneticSensor);
 
-  Serial.println("\nSetup completed! Start operating...");
+  Serial.println("\nSetup completed! Start operating...\n");
+  /*
+    Serial.println(bmp180.Temperature);
+
+    HardwareTemperatureSensor* temp1 =&bmp180;
+    HardwareTemperatureSensor temp2 =bmp180;
+    Serial.println(temp2.Temperature);
+
+    HardwareTemperatureSensor* temp = (HardwareTemperatureSensor*)hardwareSensors[0];
+    Serial.println(temp->Temperature);*/
+
+  HardwareTemperatureSensor* temperatureSensors[2] =
+  {
+    &bmp180, &bmp280
+  };
+
+  HardwareAirPressureSensor* airpressureSensors[2] =
+  {
+    &bmp180, &bmp280
+  };
+  
+  plotter.SetTemperatureSensors(temperatureSensors);
+  plotter.SetAirPressureSensors(airpressureSensors);
+  plotter.Loop();
+  plotter.Loop();
+  plotter.Loop();
+
+  
+ /* HardwareTemperatureSensor* temperatureSensors2;
+  temperatureSensors2 = temperatureSensors;
+
+  HardwareAirPressureSensor *pressSensors[] =
+  {
+    &bmp180, &bmp280
+  };
+ Serial.println(pressSensors[0]->GetName());
+ Serial.println(pressSensors[1]->GetName());
+ Serial.println(pressSensors[0]->AirPressure);
+ Serial.println(pressSensors[1]->AirPressure);*/
+
+
+  
+  /*HardwareAirPressureSensor *pressSensors2;
+  pressSensors2 = pressSensors;
+
+
+
+  Serial.println(bmp180.GetName());
+  Serial.println(bmp280.GetName());
+  Serial.println(temperatureSensors[0].GetName());
+  Serial.println(temperatureSensors[1].GetName());
+  HardwareAirPressureSensor *foo;
+  foo = &bmp180;
+  Serial.println(foo->GetName());
+  
+  
+  Serial.println(temperatureSensors[0].Temperature);
+  Serial.println(temperatureSensors[1].Temperature);
+
+  Serial.println(pressSensors[0].AirPressure);
+  Serial.println(pressSensors[1].AirPressure);
+
+  Serial.println(temperatureSensors2[0].GetName());
+  Serial.println(temperatureSensors2[1].GetName());
+  
+  Serial.println(temperatureSensors2[0].Temperature);
+  Serial.println(temperatureSensors2[1].Temperature);
+
+  Serial.println(pressSensors2[0].AirPressure);
+  Serial.println(pressSensors2[1].AirPressure);*/
+
+
+  Serial.println("*************************************************");
+
+
 }
 
 void loop()
@@ -265,7 +340,7 @@ void loop()
   lastLoopTime = now;
 #endif
 
-  sbusListener.update();
+  //sbusListener.update();
 
 #ifdef POLLING_ENABLED
   // Set receiver data to be sent in case the polling is enabled (so no actual receiver is used)
@@ -275,16 +350,18 @@ void loop()
 
   // Send the telemetry data, note that the data will only be sent for sensors
   // that are being polled at given moment
-  telemetry.send();
+  //telemetry.send();
 
-  bmp180.UpdateSensorData();
-  bmp280.UpdateSensorData();
-  lsm303m.UpdateSensorData();
-  lsm303a.UpdateSensorData();
-  mpu6050.UpdateSensorData();
-  hmc5883l.UpdateSensorData();
-  lsm6ds3.UpdateSensorData();
-  t40t.UpdateSensorData();
+  plotter.Loop();
+
+  /*bmp180.UpdateSensorData();
+    bmp280.UpdateSensorData();
+    lsm303m.UpdateSensorData();
+    lsm303a.UpdateSensorData();
+    mpu6050.UpdateSensorData();
+    hmc5883l.UpdateSensorData();
+    lsm6ds3.UpdateSensorData();
+    t40t.UpdateSensorData();*/
 
   /*for (int i = 0; i < sizeof(hardwareSensors) / sizeof(hardwareSensors[0]); ++i) {
     HardwareSensor* hardwareSensor = (HardwareSensor*)hardwareSensors[i];

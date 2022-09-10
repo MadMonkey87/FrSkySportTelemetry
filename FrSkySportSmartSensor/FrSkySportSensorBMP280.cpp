@@ -1,6 +1,10 @@
 #include "FrSkySportSensorBMP280.h"
 #include <Wire.h>
 
+bool FrSkySportSensorBMP280::IsReady(){
+  return Ready;
+}
+
 bool FrSkySportSensorBMP280::Setup() {
   if (!sensor.begin(0x76)) {
     return false;
@@ -15,22 +19,18 @@ bool FrSkySportSensorBMP280::Setup() {
 
   baseAirPressure = sensor.readPressure() / 100.0;
 
-  this->Ready = true;
+  Ready = true;
   return true;
 }
 
 void FrSkySportSensorBMP280::UpdateSensorData() {
-  if (!this->Ready) {
+  if (!Ready) {
     return;
   }
 
   AirPressure = sensor.readPressure() / 100.0;
   RelativeAltitude = sensor.readAltitude(baseAirPressure);
   Temperature = sensor.readTemperature();
-
-  Serial.println(AirPressure);
-  Serial.println(RelativeAltitude);
-  Serial.println(Temperature);
 }
 
 char* FrSkySportSensorBMP280::GetName() {

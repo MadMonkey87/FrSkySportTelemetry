@@ -3,6 +3,10 @@
 
 #include "FrSkySportSensorHMC5883L.h"
 
+bool FrSkySportSensorHMC5883L::IsReady(){
+  return Ready;
+}
+
 FrSkySportSensorHMC5883L::FrSkySportSensorHMC5883L()
 {
   sensor = Adafruit_HMC5883_Unified(0);
@@ -15,13 +19,13 @@ bool FrSkySportSensorHMC5883L::Setup()
     return false;
   }
 
-  this->Ready = true;
+  Ready = true;
   return true;
 }
 
 void FrSkySportSensorHMC5883L::UpdateSensorData()
 {
-  if (!this->Ready) {
+  if (!Ready) {
     return;
   }
 

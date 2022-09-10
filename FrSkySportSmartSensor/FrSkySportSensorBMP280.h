@@ -11,12 +11,13 @@ class FrSkySportSensorBMP280 : public HardwareAirPressureSensor, public Hardware
   public:
     virtual bool Setup();
     virtual void UpdateSensorData();
-    bool Ready;
     virtual char* GetName();
+    virtual bool IsReady();
 
   private:
     Adafruit_BMP280 sensor;
     double baseAirPressure; //in Pa
+    bool Ready;
 };
 
 #endif

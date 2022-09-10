@@ -9,7 +9,6 @@ class HardwareTemperatureSensor: public HardwareSensor
     double Temperature; // in C
 
     virtual bool IsHardwareTemperatureSensor();
-
 };
 
 #endif

@@ -1,5 +1,9 @@
 #include "FrSkySportSensorMPU6050.h"
 
+bool FrSkySportSensorMPU6050::IsReady() {
+  return Ready;
+}
+
 bool FrSkySportSensorMPU6050::Setup()
 {
   if (!mpu.begin())
@@ -8,18 +12,18 @@ bool FrSkySportSensorMPU6050::Setup()
   }
 
   temperatureSensor = mpu.getTemperatureSensor();
-  //temperatureSensor->printSensorDetails();
+  temperatureSensor->printSensorDetails();
 
   accelerationSensor = mpu.getAccelerometerSensor();
-  //accelerationSensor->printSensorDetails();
+  accelerationSensor->printSensorDetails();
 
   gyroSensor = mpu.getGyroSensor();
-  //gyroSensor->printSensorDetails();
+  gyroSensor->printSensorDetails();
 
   mpu.setAccelerometerRange(MPU6050_RANGE_8_G);
-  /*Serial.print(" - Accelerometer range set to: ");
-    switch (mpu.getAccelerometerRange())
-    {
+  Serial.print(" - Accelerometer range set to: ");
+  switch (mpu.getAccelerometerRange())
+  {
     case MPU6050_RANGE_2_G:
       Serial.println("+-2G");
       break;
@@ -32,11 +36,11 @@ bool FrSkySportSensorMPU6050::Setup()
     case MPU6050_RANGE_16_G:
       Serial.println("+-16G");
       break;
-    }
-    mpu.setGyroRange(MPU6050_RANGE_500_DEG);
-    Serial.print(" - Gyro range set to: ");
-    switch (mpu.getGyroRange())
-    {
+  }
+  mpu.setGyroRange(MPU6050_RANGE_500_DEG);
+  Serial.print(" - Gyro range set to: ");
+  switch (mpu.getGyroRange())
+  {
     case MPU6050_RANGE_250_DEG:
       Serial.println("+- 250 deg/s");
       break;
@@ -49,12 +53,12 @@ bool FrSkySportSensorMPU6050::Setup()
     case MPU6050_RANGE_2000_DEG:
       Serial.println("+- 2000 deg/s");
       break;
-    }
+  }
 
-    mpu.setFilterBandwidth(MPU6050_BAND_21_HZ);
-    Serial.print(" - Filter bandwidth set to: ");
-    switch (mpu.getFilterBandwidth())
-    {
+  mpu.setFilterBandwidth(MPU6050_BAND_21_HZ);
+  Serial.print(" - Filter bandwidth set to: ");
+  switch (mpu.getFilterBandwidth())
+  {
     case MPU6050_BAND_260_HZ:
       Serial.println("260 Hz");
       break;
@@ -76,15 +80,15 @@ bool FrSkySportSensorMPU6050::Setup()
     case MPU6050_BAND_5_HZ:
       Serial.println("5 Hz");
       break;
-    }*/
+  }
 
-  this->Ready = true;
+  Ready = true;
   return true;
 }
 
 void FrSkySportSensorMPU6050::UpdateSensorData()
 {
-  if (!this->Ready) {
+  if (!Ready) {
     return;
   }
 

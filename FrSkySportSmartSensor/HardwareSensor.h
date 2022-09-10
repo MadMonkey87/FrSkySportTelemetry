@@ -6,7 +6,7 @@ class HardwareSensor
   public:
     virtual bool Setup();
     virtual void UpdateSensorData();
-    bool Ready;
+    virtual bool IsReady();
 
     virtual bool IsHardwareTemperatureSensor();
     virtual bool IsHardwareAccelerationSensor();

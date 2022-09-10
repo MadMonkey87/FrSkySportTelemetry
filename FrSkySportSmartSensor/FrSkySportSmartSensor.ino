@@ -107,15 +107,15 @@ void setup()
     &t40t
   };
 
-  int hardwareTemperatureSensors = 0;
-  int hardwareAccelerometerSensors = 0;
-  int hardwareGyroSensors = 0;
-  int hardwareMagneticSensors = 0;
-  int hardwareAirPressureSensors = 0;
-  int unavailableHardwareSensors = 0;
+  unsigned int hardwareTemperatureSensors = 0;
+  unsigned int hardwareAccelerometerSensors = 0;
+  unsigned int hardwareGyroSensors = 0;
+  unsigned int hardwareMagneticSensors = 0;
+  unsigned int hardwareAirPressureSensors = 0;
+  unsigned int unavailableHardwareSensors = 0;
 
   Serial.print("Initializing "); Serial.print(sizeof(hardwareSensors) / sizeof(hardwareSensors[0])); Serial.println(" hardware sensors...\n");
-  for (int i = 0; i < sizeof(hardwareSensors) / sizeof(hardwareSensors[0]); ++i) {
+  for (unsigned int i = 0; i < sizeof(hardwareSensors) / sizeof(hardwareSensors[0]); ++i) {
     HardwareSensor* hardwareSensor = (HardwareSensor*)hardwareSensors[i];
     Serial.print("Initializing "); Serial.print(hardwareSensor->GetName()); Serial.println("...");
     if (hardwareSensor->Setup()) {
@@ -153,182 +153,44 @@ void setup()
     }
   }
 
-  Serial.println("Completed hardware sensors:");
-  Serial.print(" - temperature sensors: "); Serial.println(hardwareTemperatureSensors);
-  Serial.print(" - acceleration sensors: "); Serial.println(hardwareAccelerometerSensors);
-  Serial.print(" - gyro sensors: "); Serial.println(hardwareGyroSensors);
-  Serial.print(" - magnetic sensors: "); Serial.println(hardwareMagneticSensors);
-  Serial.print(" - air pressure sensors: "); Serial.println(hardwareAirPressureSensors);
-  Serial.print(" - unavailable sensors: "); Serial.println(unavailableHardwareSensors);
-  Serial.println();
-
-  Serial.println("Temperature values:");
-  for (int i = 0; i < sizeof(hardwareSensors) / sizeof(hardwareSensors[0]); ++i) {
-    HardwareSensor* hardwareSensor = (HardwareSensor*)hardwareSensors[i];
-    if (hardwareSensor->IsHardwareTemperatureSensor()) {
-      HardwareTemperatureSensor* hardwareTemperatureSensor = (HardwareTemperatureSensor*)hardwareSensors[i];
-      Serial.print(" - ");
-      Serial.print(hardwareSensor->GetName());
-      Serial.print(": ");
-      Serial.print(hardwareTemperatureSensor->Temperature);
-      Serial.println(" C°");
-    }
-  }
-
-  Serial.println("\nAccelerometer values:");
-  for (int i = 0; i < sizeof(hardwareSensors) / sizeof(hardwareSensors[0]); ++i) {
-    HardwareSensor* hardwareSensor = (HardwareSensor*)hardwareSensors[i];
-    if (hardwareSensor->IsHardwareAccelerationSensor()) {
-      HardwareAccelerationSensor* hardwareAccelerationSensor = (HardwareAccelerationSensor*)hardwareSensors[i];
-      Serial.print(" - ");
-      Serial.print(hardwareSensor->GetName());
-      Serial.print(": x:");
-      Serial.print(hardwareAccelerationSensor->AccelerationX);
-      Serial.print(" m/s2, y: ");
-      Serial.print(hardwareAccelerationSensor->AccelerationY);
-      Serial.print(" m/s2, z: ");
-      Serial.print(hardwareAccelerationSensor->AccelerationZ);
-      Serial.println(" m/s2");
-    }
-  }
-
-  Serial.println("\nGyro values:");
-  for (int i = 0; i < sizeof(hardwareSensors) / sizeof(hardwareSensors[0]); ++i) {
-    HardwareSensor* hardwareSensor = (HardwareSensor*)hardwareSensors[i];
-    if (hardwareSensor->IsHardwareGyroSensor()) {
-      HardwareGyroSensor* hardwareGyroSensor = (HardwareGyroSensor*)hardwareSensors[i];
-      Serial.print(" - ");
-      Serial.print(hardwareSensor->GetName());
-      Serial.print(": x:");
-      Serial.print(hardwareGyroSensor->GyroX);
-      Serial.print(" deg/s, y: ");
-      Serial.print(hardwareGyroSensor->GyroY);
-      Serial.print(" deg/s, z: ");
-      Serial.print(hardwareGyroSensor->GyroZ);
-      Serial.println(" deg/s");
-    }
-  }
-
-  Serial.println("\nMagnetic values:");
-  for (int i = 0; i < sizeof(hardwareSensors) / sizeof(hardwareSensors[0]); ++i) {
-    HardwareSensor* hardwareSensor = (HardwareSensor*)hardwareSensors[i];
-    if (hardwareSensor->IsHardwareMagneticSensor()) {
-      HardwareMagneticSensor* hardwareMagneticSensor = (HardwareMagneticSensor*)hardwareSensors[i];
-      Serial.print(" - ");
-      Serial.print(hardwareSensor->GetName());
-      Serial.print(": x:");
-      Serial.print(hardwareMagneticSensor->MagneticX);
-      Serial.print(" uT, y: ");
-      Serial.print(hardwareMagneticSensor->MagneticY);
-      Serial.print(" uT, z: ");
-      Serial.print(hardwareMagneticSensor->MagneticZ);
-      Serial.println(" uT");
-    }
-  }
-
-  Serial.println("\nAir pressure values:");
-  for (int i = 0; i < sizeof(hardwareSensors) / sizeof(hardwareSensors[0]); ++i) {
-    HardwareSensor* hardwareSensor = (HardwareSensor*)hardwareSensors[i];
-    if (hardwareSensor->IsHardwareAirPressureSensor()) {
-      HardwareAirPressureSensor* hardwareAirPressureSensor = (HardwareAirPressureSensor*)hardwareSensors[i];
-      Serial.print(" - ");
-      Serial.print(hardwareSensor->GetName());
-      Serial.print(": ");
-      Serial.print(hardwareAirPressureSensor->AirPressure);
-      Serial.print(" hPa, ");
-      Serial.print(hardwareAirPressureSensor->RelativeAltitude);
-      Serial.println(" m");
-    }
-  }
-
-  //void* ptr = &t40t;
-
-  //HardwareTemperatureSensor x = *(HardwareTemperatureSensor*)ptr;
-  //Serial.println(x.Temperature);
-
-  //Serial.println(&foo->Temperature);
-  //Serial.println( (*(HardwareTemperatureSensor*)ptr).       );
-
   HardwareAccelerationSensor *accelerationSensor = &lsm6ds3;
   HardwareGyroSensor *gyroSensor = &lsm6ds3;
   HardwareMagneticSensor *magneticSensor = &lsm303m;
   orientationSensor.Setup(accelerationSensor, gyroSensor, magneticSensor);
 
+  HardwareTemperatureSensor* temperatureSensors[] =
+  {
+    &bmp180, &bmp280, &t40t
+  };
+
+  HardwareAirPressureSensor* airpressureSensors[] =
+  {
+    &bmp180, &bmp280
+  };
+
+  HardwareAccelerationSensor* accelerationSensors[] =
+  {
+    &mpu6050, &lsm6ds3, &lsm303a
+  };
+
+  HardwareGyroSensor* gyroSensors[] =
+  {
+    &mpu6050, &lsm6ds3
+  };
+
+  HardwareMagneticSensor* magneticSensors[] =
+  {
+    &hmc5883l, &lsm303m
+  };
+
+  plotter.SetTemperatureSensors(temperatureSensors, sizeof(temperatureSensors) / sizeof(HardwareTemperatureSensor*));
+  plotter.SetAirPressureSensors(airpressureSensors, sizeof(airpressureSensors) / sizeof(HardwareAirPressureSensor*));
+  plotter.SetAccelerationSensors(accelerationSensors, sizeof(accelerationSensors) / sizeof(HardwareAccelerationSensor*));
+  plotter.SetGyroSensors(gyroSensors, sizeof(gyroSensors) / sizeof(HardwareGyroSensor*));
+  plotter.SetMagneticSensors(magneticSensors, sizeof(magneticSensors) / sizeof(HardwareMagneticSensor*));
+  plotter.PrintDetails();
+
   Serial.println("\nSetup completed! Start operating...\n");
-  /*
-    Serial.println(bmp180.Temperature);
-
-    HardwareTemperatureSensor* temp1 =&bmp180;
-    HardwareTemperatureSensor temp2 =bmp180;
-    Serial.println(temp2.Temperature);
-
-    HardwareTemperatureSensor* temp = (HardwareTemperatureSensor*)hardwareSensors[0];
-    Serial.println(temp->Temperature);*/
-
-  HardwareTemperatureSensor* temperatureSensors[2] =
-  {
-    &bmp180, &bmp280
-  };
-
-  HardwareAirPressureSensor* airpressureSensors[2] =
-  {
-    &bmp180, &bmp280
-  };
-  
-  plotter.SetTemperatureSensors(temperatureSensors);
-  plotter.SetAirPressureSensors(airpressureSensors);
-  plotter.Loop();
-  plotter.Loop();
-  plotter.Loop();
-
-  
- /* HardwareTemperatureSensor* temperatureSensors2;
-  temperatureSensors2 = temperatureSensors;
-
-  HardwareAirPressureSensor *pressSensors[] =
-  {
-    &bmp180, &bmp280
-  };
- Serial.println(pressSensors[0]->GetName());
- Serial.println(pressSensors[1]->GetName());
- Serial.println(pressSensors[0]->AirPressure);
- Serial.println(pressSensors[1]->AirPressure);*/
-
-
-  
-  /*HardwareAirPressureSensor *pressSensors2;
-  pressSensors2 = pressSensors;
-
-
-
-  Serial.println(bmp180.GetName());
-  Serial.println(bmp280.GetName());
-  Serial.println(temperatureSensors[0].GetName());
-  Serial.println(temperatureSensors[1].GetName());
-  HardwareAirPressureSensor *foo;
-  foo = &bmp180;
-  Serial.println(foo->GetName());
-  
-  
-  Serial.println(temperatureSensors[0].Temperature);
-  Serial.println(temperatureSensors[1].Temperature);
-
-  Serial.println(pressSensors[0].AirPressure);
-  Serial.println(pressSensors[1].AirPressure);
-
-  Serial.println(temperatureSensors2[0].GetName());
-  Serial.println(temperatureSensors2[1].GetName());
-  
-  Serial.println(temperatureSensors2[0].Temperature);
-  Serial.println(temperatureSensors2[1].Temperature);
-
-  Serial.println(pressSensors2[0].AirPressure);
-  Serial.println(pressSensors2[1].AirPressure);*/
-
-
-  Serial.println("*************************************************");
-
-
 }
 
 void loop()
@@ -352,16 +214,19 @@ void loop()
   // that are being polled at given moment
   //telemetry.send();
 
-  plotter.Loop();
 
-  /*bmp180.UpdateSensorData();
-    bmp280.UpdateSensorData();
-    lsm303m.UpdateSensorData();
-    lsm303a.UpdateSensorData();
-    mpu6050.UpdateSensorData();
-    hmc5883l.UpdateSensorData();
-    lsm6ds3.UpdateSensorData();
-    t40t.UpdateSensorData();*/
+  //plotter.Loop();
+
+  bmp180.UpdateSensorData();
+  bmp280.UpdateSensorData();
+  lsm303m.UpdateSensorData();
+  lsm303a.UpdateSensorData();
+  mpu6050.UpdateSensorData();
+  hmc5883l.UpdateSensorData();
+  lsm6ds3.UpdateSensorData();
+  t40t.UpdateSensorData();
+
+
 
   /*for (int i = 0; i < sizeof(hardwareSensors) / sizeof(hardwareSensors[0]); ++i) {
     HardwareSensor* hardwareSensor = (HardwareSensor*)hardwareSensors[i];
@@ -369,4 +234,13 @@ void loop()
     }*/
   //Serial.print("bpm180:"); Serial.print(bmp180.RelativeAltitude); Serial.print(" bpm280:"); Serial.println(bmp280.RelativeAltitude);
   //Serial.print("mpu6050:");Serial.print(mpu6050.Temperature);Serial.print(" bpm180:");Serial.print(bmp180.Temperature);Serial.print(" bpm280:");Serial.println(bmp280.Temperature);
+
+  //plotter.PrintDetails();
+
+  //plotter.PlotTemperatures();
+  plotter.PlotAirPressures();
+  //plotter.PlotRealativeAltitudes();
+  //plotter.PlotAccelerationValues();
+  //plotter.PlotGyroValues();
+  //plotter.PlotMagneticValues();
 }

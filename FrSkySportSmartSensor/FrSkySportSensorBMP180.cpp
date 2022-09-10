@@ -1,5 +1,9 @@
 #include "FrSkySportSensorBMP180.h"
 
+bool FrSkySportSensorBMP180::IsReady(){
+  return Ready;
+}
+
 bool FrSkySportSensorBMP180::Setup() {
   if (!sensor.begin()) {
     return false;
@@ -7,12 +11,12 @@ bool FrSkySportSensorBMP180::Setup() {
 
   baseAirPressure = sensor.readPressure();
 
-  this->Ready = true;
+  Ready = true;
   return true;
 }
 
 void FrSkySportSensorBMP180::UpdateSensorData() {
-  if (!this->Ready) {
+  if (Ready) {
     return;
   }
 

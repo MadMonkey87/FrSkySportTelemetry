@@ -3,6 +3,10 @@
 
 #include "FrSkySportSensorLSM303M.h"
 
+bool FrSkySportSensorLSM303M::IsReady() {
+  return Ready;
+}
+
 FrSkySportSensorLSM303M::FrSkySportSensorLSM303M()
 {
   sensor = Adafruit_LSM303_Mag_Unified(0);
@@ -15,29 +19,29 @@ bool FrSkySportSensorLSM303M::Setup()
     return false;
   }
 
-  /*sensor_t sensorDetails;
-    sensor.getSensor(&sensorDetails);
-    Serial.print(" - Sensor: ");
-    Serial.println(sensorDetails.name);
-    Serial.print(" - Driver Ver: ");
-    Serial.println(sensorDetails.version);
-    Serial.print(" - Max Value: ");
-    Serial.print(sensorDetails.max_value);
-    Serial.println(" uT");
-    Serial.print(" - Min Value: ");
-    Serial.print(sensorDetails.min_value);
-    Serial.println(" uT");
-    Serial.print(" - Resolution: ");
-    Serial.print(sensorDetails.resolution);
-    Serial.println(" uT");*/
+  sensor_t sensorDetails;
+  sensor.getSensor(&sensorDetails);
+  Serial.print(" - Sensor: ");
+  Serial.println(sensorDetails.name);
+  Serial.print(" - Driver Ver: ");
+  Serial.println(sensorDetails.version);
+  Serial.print(" - Max Value: ");
+  Serial.print(sensorDetails.max_value);
+  Serial.println(" uT");
+  Serial.print(" - Min Value: ");
+  Serial.print(sensorDetails.min_value);
+  Serial.println(" uT");
+  Serial.print(" - Resolution: ");
+  Serial.print(sensorDetails.resolution);
+  Serial.println(" uT");
 
-  this->Ready = true;
+  Ready = true;
   return true;
 }
 
 void FrSkySportSensorLSM303M::UpdateSensorData()
 {
-  if (!this->Ready) {
+  if (!Ready) {
     return;
   }
 

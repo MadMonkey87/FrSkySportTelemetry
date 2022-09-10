@@ -21,13 +21,15 @@
 #include "FrSkySportSensorMPU6050.h"
 #include "FrSkySportSensorLSM6DS3.h"
 #include "FrSkySportSensorHMC5883L.h"
-#include "FrSkySportSensorTeensy40Temperature.h"
+#include "FrSkySportSensorTeensyOnBoard.h"
 #include "FrSkySportSensorOrientation.h"
 #include "FrSkySportSingleWireSerial.h"
 #include "FrSkySportTelemetry.h"
 #include "Plotter.h"
 #if !defined(TEENSY_HW)
 #include "SoftwareSerial.h"
+#else
+#include <InternalTemperature.h>
 #endif
 
 I2CScanner i2cScanner;
@@ -39,7 +41,7 @@ FrSkySportSensorLSM303A lsm303a;
 FrSkySportSensorMPU6050 mpu6050;
 FrSkySportSensorLSM6DS3 lsm6ds3;
 FrSkySportSensorHMC5883L hmc5883l;
-FrSkySportSensorTeensy40Temperature t40t;
+FrSkySportSensorTeensyOnBoard teensyOnBoard;
 FrSkySportSensorOrientation orientationSensor;
 Plotter plotter;
 #ifdef POLLING_ENABLED
@@ -52,6 +54,31 @@ FrSkySportTelemetry telemetry; // Create telemetry object without polling
 #if defined(DEBUG)
 unsigned long lastLoopTime = millis();
 #endif
+
+HardwareTemperatureSensor* temperatureSensors[] =
+{
+  &bmp180, &bmp280, &teensyOnBoard
+};
+
+HardwareAirPressureSensor* airpressureSensors[] =
+{
+  &bmp180, &bmp280
+};
+
+HardwareAccelerationSensor* accelerationSensors[] =
+{
+  &mpu6050, &lsm6ds3, &lsm303a
+};
+
+HardwareGyroSensor* gyroSensors[] =
+{
+  &mpu6050, &lsm6ds3
+};
+
+HardwareMagneticSensor* magneticSensors[] =
+{
+  &hmc5883l, &lsm303m
+};
 
 void setup()
 {
@@ -68,7 +95,8 @@ void setup()
 #endif
 #if defined(TEENSY_HW)
   Serial.println(" - Running on teensy: yes");
-
+  Serial.print(" - unique Teensy Id: "); Serial.println(InternalTemperature.getUniqueID(), HEX);
+  Serial.print(" - CPU voltage: "); Serial.print(InternalTemperature.getVTemp25()); Serial.println(" V");
 #else
   Serial.println(" - Running on teensy: no\n");
 #endif
@@ -104,7 +132,7 @@ void setup()
     &mpu6050,
     &lsm6ds3,
     &hmc5883l,
-    &t40t
+    &teensyOnBoard
   };
 
   unsigned int hardwareTemperatureSensors = 0;
@@ -158,31 +186,6 @@ void setup()
   HardwareMagneticSensor *magneticSensor = &lsm303m;
   orientationSensor.Setup(accelerationSensor, gyroSensor, magneticSensor);
 
-  HardwareTemperatureSensor* temperatureSensors[] =
-  {
-    &bmp180, &bmp280, &t40t
-  };
-
-  HardwareAirPressureSensor* airpressureSensors[] =
-  {
-    &bmp180, &bmp280
-  };
-
-  HardwareAccelerationSensor* accelerationSensors[] =
-  {
-    &mpu6050, &lsm6ds3, &lsm303a
-  };
-
-  HardwareGyroSensor* gyroSensors[] =
-  {
-    &mpu6050, &lsm6ds3
-  };
-
-  HardwareMagneticSensor* magneticSensors[] =
-  {
-    &hmc5883l, &lsm303m
-  };
-
   plotter.SetTemperatureSensors(temperatureSensors, sizeof(temperatureSensors) / sizeof(HardwareTemperatureSensor*));
   plotter.SetAirPressureSensors(airpressureSensors, sizeof(airpressureSensors) / sizeof(HardwareAirPressureSensor*));
   plotter.SetAccelerationSensors(accelerationSensors, sizeof(accelerationSensors) / sizeof(HardwareAccelerationSensor*));
@@ -190,11 +193,23 @@ void setup()
   plotter.SetMagneticSensors(magneticSensors, sizeof(magneticSensors) / sizeof(HardwareMagneticSensor*));
   plotter.PrintDetails();
 
-  Serial.println("\nSetup completed! Start operating...\n");
+  Serial.println();
+  Serial.println("Setup completed! Start operating...\n");
 }
+
+bool blink = false;
 
 void loop()
 {
+
+  if (blink) {
+    blink = false;
+    digitalWrite(13, HIGH);
+  } else {
+    digitalWrite(13, LOW);
+    blink = true;
+  }
+
 #if defined(DEBUG)
   unsigned long now = millis();
   Serial.print("loop time (ms): ");
@@ -212,10 +227,7 @@ void loop()
 
   // Send the telemetry data, note that the data will only be sent for sensors
   // that are being polled at given moment
-  //telemetry.send();
-
-
-  //plotter.Loop();
+  telemetry.send();
 
   bmp180.UpdateSensorData();
   bmp280.UpdateSensorData();
@@ -224,8 +236,7 @@ void loop()
   mpu6050.UpdateSensorData();
   hmc5883l.UpdateSensorData();
   lsm6ds3.UpdateSensorData();
-  t40t.UpdateSensorData();
-
+  teensyOnBoard.UpdateSensorData();
 
 
   /*for (int i = 0; i < sizeof(hardwareSensors) / sizeof(hardwareSensors[0]); ++i) {
@@ -238,7 +249,7 @@ void loop()
   //plotter.PrintDetails();
 
   //plotter.PlotTemperatures();
-  plotter.PlotAirPressures();
+  //plotter.PlotAirPressures();
   //plotter.PlotRealativeAltitudes();
   //plotter.PlotAccelerationValues();
   //plotter.PlotGyroValues();

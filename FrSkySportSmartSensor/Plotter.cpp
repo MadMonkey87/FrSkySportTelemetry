@@ -28,7 +28,7 @@ void Plotter::SetMagneticSensors(HardwareMagneticSensor *magneticSensors[], unsi
 
 void Plotter::PrintDetails() {
 
-  Serial.println("\nTemperature Sensors: ");
+  Serial.println("Temperature Sensors: ");
   for (unsigned int i = 0; i < temperatureSensorsCount; i++) {
     if (temperatureSensors[i]->IsReady()) {
       Serial.print(" - ");
@@ -43,7 +43,8 @@ void Plotter::PrintDetails() {
     }
   }
 
-  Serial.println("\nAir pressure Sensors: ");
+  Serial.println();
+  Serial.println("Air pressure Sensors: ");
   for (unsigned int i = 0; i < airPressureSensorsCount; i++) {
     if (airPressureSensors[i]->IsReady()) {
       Serial.print(" - ");
@@ -60,7 +61,8 @@ void Plotter::PrintDetails() {
     }
   }
 
-  Serial.println("\nAcceleration Sensors: ");
+  Serial.println();
+  Serial.println("Acceleration Sensors: ");
   for (unsigned int i = 0; i < accelerationSensorsCount; i++) {
     if (accelerationSensors[i]->IsReady()) {
       Serial.print(" - ");
@@ -99,7 +101,8 @@ void Plotter::PrintDetails() {
     }
   }
 
-  Serial.println("\nMagnetic Sensors: ");
+  Serial.println();
+  Serial.println("Magnetic Sensors: ");
   for (unsigned int i = 0; i < magneticSensorsCount; i++) {
     if (magneticSensors[i]->IsReady()) {
       Serial.print(" - ");
@@ -120,12 +123,14 @@ void Plotter::PrintDetails() {
 }
 
 void Plotter::PlotTemperatures() {
+  bool isFirstSensor = true;
   for (unsigned int i = 0; i < temperatureSensorsCount; i++) {
     if (temperatureSensors[i]->IsReady()) {
-      if (i > 0) {
+      if (isFirstSensor) {
+        isFirstSensor = false;
+      } else {
         Serial.print(",");
       }
-      //temperatureSensors[i]->UpdateSensorData();
       Serial.print(temperatureSensors[i]->GetName());
       Serial.print(": ");
       Serial.print(temperatureSensors[i]->Temperature);
@@ -135,12 +140,14 @@ void Plotter::PlotTemperatures() {
 }
 
 void Plotter::PlotAirPressures() {
+  bool isFirstSensor = true;
   for (unsigned int i = 0; i < airPressureSensorsCount; i++) {
     if (airPressureSensors[i]->IsReady()) {
-      if (i > 0) {
+      if (isFirstSensor) {
+        isFirstSensor = false;
+      } else {
         Serial.print(",");
       }
-      //airPressureSensors[i]->UpdateSensorData();
       Serial.print(airPressureSensors[i]->GetName());
       Serial.print(": ");
       Serial.print(airPressureSensors[i]->AirPressure);
@@ -150,12 +157,14 @@ void Plotter::PlotAirPressures() {
 }
 
 void Plotter::PlotRealativeAltitudes() {
+  bool isFirstSensor = true;
   for (unsigned int i = 0; i < airPressureSensorsCount; i++) {
     if (airPressureSensors[i]->IsReady()) {
-      if (i > 0) {
+      if (isFirstSensor) {
+        isFirstSensor = false;
+      } else {
         Serial.print(",");
       }
-      //airPressureSensors[i]->UpdateSensorData();
       Serial.print(airPressureSensors[i]->GetName());
       Serial.print(": ");
       Serial.print(airPressureSensors[i]->RelativeAltitude);
@@ -165,12 +174,14 @@ void Plotter::PlotRealativeAltitudes() {
 }
 
 void Plotter::PlotAccelerationValues() {
+  bool isFirstSensor = true;
   for (unsigned int i = 0; i < accelerationSensorsCount; i++) {
     if (accelerationSensors[i]->IsReady()) {
-      if (i > 0) {
+      if (isFirstSensor) {
+        isFirstSensor = false;
+      } else {
         Serial.print(",");
       }
-      //accelerationSensors[i]->UpdateSensorData();
       Serial.print(accelerationSensors[i]->GetName());
       Serial.print("_ACC_X: ");
       Serial.print(accelerationSensors[i]->AccelerationX);
@@ -188,12 +199,14 @@ void Plotter::PlotAccelerationValues() {
 }
 
 void Plotter::PlotGyroValues() {
+  bool isFirstSensor = true;
   for (unsigned int i = 0; i < gyroSensorsCount; i++) {
     if (gyroSensors[i]->IsReady()) {
-      if (i > 0) {
+      if (isFirstSensor) {
+        isFirstSensor = false;
+      } else {
         Serial.print(",");
       }
-      //gyroSensors[i]->UpdateSensorData();
       Serial.print(gyroSensors[i]->GetName());
       Serial.print("_GYRO__X: ");
       Serial.print(gyroSensors[i]->GyroX);
@@ -211,12 +224,14 @@ void Plotter::PlotGyroValues() {
 }
 
 void Plotter::PlotMagneticValues() {
+  bool isFirstSensor = true;
   for (unsigned int i = 0; i < magneticSensorsCount; i++) {
     if (magneticSensors[i]->IsReady()) {
-      if (i > 0) {
+      if (isFirstSensor) {
+        isFirstSensor = false;
+      } else {
         Serial.print(",");
       }
-      //magneticSensors[i]->UpdateSensorData();
       Serial.print(magneticSensors[i]->GetName());
       Serial.print("_MAG__X: ");
       Serial.print(magneticSensors[i]->MagneticX);

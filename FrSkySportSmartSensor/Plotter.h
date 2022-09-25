@@ -20,6 +20,7 @@ class Plotter
     void PlotAirPressures();
     void PlotRealativeAltitudes();
     void PlotAccelerationValues();
+    void PlotGForceValues();
     void PlotGyroValues();
     void PlotMagneticValues();
 

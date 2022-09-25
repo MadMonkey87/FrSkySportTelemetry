@@ -6,8 +6,9 @@
 class HardwareAccelerationSensor: public HardwareSensor
 {
   public:
-    double AccelerationX, AccelerationY, AccelerationZ; 
+    double AccelerationX, AccelerationY, AccelerationZ;
     virtual bool IsHardwareAccelerationSensor();
+    double GetGForces();
 };
 
 #endif

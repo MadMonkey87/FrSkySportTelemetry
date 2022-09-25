@@ -181,8 +181,8 @@ void setup()
     }
   }
 
-  HardwareAccelerationSensor *accelerationSensor = &lsm6ds3;
-  HardwareGyroSensor *gyroSensor = &lsm6ds3;
+  HardwareAccelerationSensor *accelerationSensor = &mpu6050;
+  HardwareGyroSensor *gyroSensor = &mpu6050;
   HardwareMagneticSensor *magneticSensor = &lsm303m;
   orientationSensor.Setup(accelerationSensor, gyroSensor, magneticSensor);
 
@@ -202,6 +202,10 @@ bool blink = false;
 void loop()
 {
 
+
+
+
+
   if (blink) {
     blink = false;
     digitalWrite(13, HIGH);
@@ -217,6 +221,11 @@ void loop()
   lastLoopTime = now;
 #endif
 
+
+
+
+
+
   //sbusListener.update();
 
 #ifdef POLLING_ENABLED
@@ -229,6 +238,11 @@ void loop()
   // that are being polled at given moment
   telemetry.send();
 
+
+
+
+
+
   bmp180.UpdateSensorData();
   bmp280.UpdateSensorData();
   lsm303m.UpdateSensorData();
@@ -237,6 +251,12 @@ void loop()
   hmc5883l.UpdateSensorData();
   lsm6ds3.UpdateSensorData();
   teensyOnBoard.UpdateSensorData();
+
+
+  orientationSensor.readAndCalculate();
+
+
+
 
 
   /*for (int i = 0; i < sizeof(hardwareSensors) / sizeof(hardwareSensors[0]); ++i) {
@@ -252,6 +272,7 @@ void loop()
   //plotter.PlotAirPressures();
   //plotter.PlotRealativeAltitudes();
   //plotter.PlotAccelerationValues();
+  //plotter.PlotGForceValues();
   //plotter.PlotGyroValues();
   //plotter.PlotMagneticValues();
 }

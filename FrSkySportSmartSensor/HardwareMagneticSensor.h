@@ -7,7 +7,6 @@ class HardwareMagneticSensor: public HardwareSensor
 {
   public:
     double MagneticX, MagneticY, MagneticZ;
-
     virtual bool IsHardwareMagneticSensor();
 };
 

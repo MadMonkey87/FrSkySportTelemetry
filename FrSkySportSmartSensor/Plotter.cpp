@@ -39,7 +39,7 @@ void Plotter::PrintDetails() {
     } else {
       Serial.print(" - ");
       Serial.print(temperatureSensors[i]->GetName());
-      Serial.print(": not ready!");
+      Serial.println(": not ready!");
     }
   }
 
@@ -57,7 +57,7 @@ void Plotter::PrintDetails() {
     } else {
       Serial.print(" - ");
       Serial.print(airPressureSensors[i]->GetName());
-      Serial.print(": not ready!");
+      Serial.println(": not ready!");
     }
   }
 
@@ -77,7 +77,7 @@ void Plotter::PrintDetails() {
     } else {
       Serial.print(" - ");
       Serial.print(accelerationSensors[i]->GetName());
-      Serial.print(": not ready!");
+      Serial.println(": not ready!");
     }
   }
 
@@ -97,7 +97,7 @@ void Plotter::PrintDetails() {
     } else {
       Serial.print(" - ");
       Serial.print(gyroSensors[i]->GetName());
-      Serial.print(": not ready!");
+      Serial.println(": not ready!");
     }
   }
 
@@ -117,7 +117,7 @@ void Plotter::PrintDetails() {
     } else {
       Serial.print(" - ");
       Serial.print(magneticSensors[i]->GetName());
-      Serial.print(": not ready!");
+      Serial.println(": not ready!");
     }
   }
 }
@@ -193,6 +193,23 @@ void Plotter::PlotAccelerationValues() {
       Serial.print(accelerationSensors[i]->GetName());
       Serial.print("_ACC_Z: ");
       Serial.print(accelerationSensors[i]->AccelerationZ);
+    }
+  }
+  Serial.println();
+}
+
+void Plotter::PlotGForceValues() {
+  bool isFirstSensor = true;
+  for (unsigned int i = 0; i < accelerationSensorsCount; i++) {
+    if (accelerationSensors[i]->IsReady()) {
+      if (isFirstSensor) {
+        isFirstSensor = false;
+      } else {
+        Serial.print(",");
+      }
+      Serial.print(accelerationSensors[i]->GetName());
+      Serial.print("_GFORCE: ");
+      Serial.print(accelerationSensors[i]->GetGForces());
     }
   }
   Serial.println();

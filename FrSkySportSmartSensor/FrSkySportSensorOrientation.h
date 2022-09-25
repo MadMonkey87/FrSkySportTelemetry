@@ -32,38 +32,30 @@ class FrSkySportSensorOrientation : public FrSkySportSensor
     uint16_t decodeData(uint8_t id, uint16_t appId, uint32_t data);
     void loop();
     void Setup(HardwareAccelerationSensor* accelerationSensor, HardwareGyroSensor* gyroSensor =  NULL, HardwareMagneticSensor* magneticSensor =  NULL);
-
+    void readAndCalculate();
+    
   protected:
-    bool sensorInitialized;           // true if setting up the sensor was successful
-    double accX, accY, accZ;          // acceleration data of the sensor
-    double gyroX, gyroY, gyroZ;       // gyro data of the sensor
-    double magnetometerX, magnetometerY, magnetometerZ;       // magnetometer data of the sensor
-
     HardwareAccelerationSensor* accelerationSensor;
     HardwareGyroSensor* gyroSensor;
     HardwareMagneticSensor* magneticSensor;
 
   private:
-
-
-
-
-
-
-    void readAndCalculate();
-    double getRoll();
-    double getPitch();
-    double getGForces();
+    double getRollFromAcceleration();
+    double getPitchFromAcceleration();
+    
     uint32_t processingTime;    // next time when the sensor data gets read and calculated
-    double pitchOffset, rollOffset;
     uint32_t deltaTime; //used to determine the exact dt passed between sensor events
-    double gyroXrate; //deg/s
-    double gyroYrate; //deg/s
-    double gyroXangle, gyroYangle; // Angle calculate using the gyro only
-    double compAngleX, compAngleY; // Calculated angle using a complementary filter
-    double kalAngleX, kalAngleY; // Calculated angle using a Kalman filter
-    Kalman kalmanX;
-    Kalman kalmanY;
+        
+    double pitchOffset, rollOffset;
+    
+    double gyroRollRate, gyroPitchRate; //deg/s
+    
+    double accelerationRollAngle, accelerationPitchAngle; //Calculates angles using the raw acceleration values
+    double gyroPitchAngle, gyroRollAngle; //Calculates angles using the raw gyro values
+    double complementaryRollAngle, complementaryPitchAngle; // Calculated angles using a complementary filter
+    double kalmanRollAngle, kalmanPitchAngle; // Calculated angles using a Kalman filter
+    
+    Kalman kalmanRoll, kalmanPitch;
     Madgwick filter;
 
 };

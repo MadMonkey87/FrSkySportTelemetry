@@ -128,7 +128,6 @@ void FrSkySportSensorOrientation::loop()
     heading = atan2(magneticSensor->MagneticY, magneticSensor->MagneticX);
   }
 
-
   // Once you have your heading, you must then add your 'Declination Angle', which is the 'Error' of the magnetic field in your location.
   // Find yours here: http://www.magnetic-declination.com/
   // Mine is: -13* 2' W, which is ~13 Degrees, or (which we need) 0.22 radians
@@ -169,12 +168,13 @@ void FrSkySportSensorOrientation::readAndCalculate()
 
   if (magneticSensor && magneticSensor->IsReady()) {
     magneticSensor->UpdateSensorData();
+    filter.update(gyroSensor->GyroX, gyroSensor->GyroY, gyroSensor->GyroZ, accelerationSensor->AccelerationX, accelerationSensor->AccelerationY, accelerationSensor->AccelerationZ, magneticSensor->MagneticX, magneticSensor->MagneticY, magneticSensor->MagneticZ);
+  } else {
+    filter.updateIMU(gyroSensor->GyroX, gyroSensor->GyroY, gyroSensor->GyroZ, accelerationSensor->AccelerationX, accelerationSensor->AccelerationY, accelerationSensor->AccelerationZ);
   }
 
   double dt = (double)(micros() - deltaTime) / 1000000; // Calculate delta time
   deltaTime = micros();
-
-  filter.updateIMU(gyroSensor->GyroX, gyroSensor->GyroY, gyroSensor->GyroZ, accelerationSensor->AccelerationX, accelerationSensor->AccelerationY, accelerationSensor->AccelerationZ);
 
   accelerationRollAngle = getRollFromAcceleration();
   accelerationPitchAngle = getPitchFromAcceleration();
@@ -238,7 +238,6 @@ void FrSkySportSensorOrientation::readAndCalculate()
     gyroRollAngle = kalmanPitchAngle;
   }
 
-
   Serial.print("pitch:");
   Serial.print(accelerationPitchAngle);
   Serial.print(",roll:");
@@ -248,6 +247,11 @@ void FrSkySportSensorOrientation::readAndCalculate()
   Serial.print(kalmanPitchAngle);
   Serial.print(",kalman_roll:");
   Serial.print(kalmanRollAngle);
+
+  Serial.print("AHRS_pitch:");
+  Serial.print(filter.getPitch());
+  Serial.print(",AHRS_roll:");
+  Serial.print(filter.getRoll());
 
   Serial.print("complementary_pitch:");
   Serial.print(complementaryPitchAngle);

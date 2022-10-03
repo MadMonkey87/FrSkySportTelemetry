@@ -45,10 +45,10 @@ void I2CScanner::scan()
   }
   if (nDevices == 0)
   {
-    Serial.println(" - no I2C devices found\n");
+    Serial.println(" - no I2C devices found");
   }
 
-  Serial.println("scanning completed!\n");
+  Serial.println("scanning completed!");
 
   WIRE.end();
 }

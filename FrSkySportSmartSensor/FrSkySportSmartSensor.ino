@@ -114,10 +114,14 @@ void setup()
   Serial.println("");
 
   i2cScanner.scan();
+  Serial.println("");
 
   plotter.Setup();
+  Serial.println("");
 
+  Serial.println("Initialize SBUS...");
   sbus.Setup();
+  Serial.println("");
 
   void* hardwareSensors[] = {
     &bmp180,
@@ -254,7 +258,7 @@ void loop()
   teensyOnBoard.UpdateSensorData();
 
 
-  virtualOrientationSensor.ReadAndCalculate();
+  //virtualOrientationSensor.ReadAndCalculate();
 
 
 

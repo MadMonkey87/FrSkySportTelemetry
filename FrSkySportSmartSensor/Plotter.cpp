@@ -24,7 +24,6 @@ bool sdCardReady = false;
 void Plotter::Setup() {
   Serial.println("Initialiting plotter persistence...");
 
-
   if (!card.init(SPI_HALF_SPEED, chipSelect)) {
     Serial.println(" - No SD card was found (check wiring and chipSelect mode)");
     Serial.println("failed!");
@@ -32,7 +31,7 @@ void Plotter::Setup() {
   }
 
   if (!volume.init(card)) {
-    Serial.println("Could not find FAT16/FAT32 partition.\nMake sure you've formatted the card");
+    Serial.println(" - Could not find FAT16/FAT32 partition.\nMake sure you've formatted the card");
     Serial.println("failed!");
     return;
   }
@@ -56,7 +55,6 @@ void Plotter::Setup() {
   uint32_t volumesize;
   Serial.print(" - volume type is FAT");
   Serial.println(volume.fatType(), DEC);
-  Serial.println();
 
   volumesize = volume.blocksPerCluster();    // clusters are collections of blocks
   volumesize *= volume.clusterCount();       // we'll have a lot of clusters
@@ -97,7 +95,11 @@ void Plotter::SetMagneticSensors(HardwareMagneticSensor *magneticSensors[], unsi
 
 void Plotter::PrintDetails() {
 
-  Serial.print("Persist: "); Serial.println(sdCardReady);
+  if (sdCardReady) {
+    Serial.print("Persist: YES");
+  } else {
+    Serial.print("Persist: NO");
+  }
 
   Serial.println("Temperature Sensors: ");
   for (unsigned int i = 0; i < temperatureSensorsCount; i++) {

@@ -1,10 +1,10 @@
-#include "FrSkySportSensorMPU6050.h"
+#include "SensorMPU6050.h"
 
-bool FrSkySportSensorMPU6050::IsReady() {
+bool SensorMPU6050::IsReady() {
   return Ready;
 }
 
-bool FrSkySportSensorMPU6050::Setup()
+bool SensorMPU6050::Setup()
 {
   if (!mpu.begin())
   {
@@ -86,7 +86,7 @@ bool FrSkySportSensorMPU6050::Setup()
   return true;
 }
 
-void FrSkySportSensorMPU6050::UpdateSensorData()
+void SensorMPU6050::UpdateSensorData()
 {
   if (!Ready) {
     return;
@@ -108,6 +108,6 @@ void FrSkySportSensorMPU6050::UpdateSensorData()
   Temperature = event.temperature;
 }
 
-char* FrSkySportSensorMPU6050::GetName() {
+char* SensorMPU6050::GetName() {
   return "MPU6050";
 }

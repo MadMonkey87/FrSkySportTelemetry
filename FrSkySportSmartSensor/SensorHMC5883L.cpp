@@ -1,18 +1,18 @@
 #include <Adafruit_Sensor.h>
 #include <Wire.h>
 
-#include "FrSkySportSensorHMC5883L.h"
+#include "SensorHMC5883L.h"
 
-bool FrSkySportSensorHMC5883L::IsReady(){
+bool SensorHMC5883L::IsReady(){
   return Ready;
 }
 
-FrSkySportSensorHMC5883L::FrSkySportSensorHMC5883L()
+SensorHMC5883L::SensorHMC5883L()
 {
   sensor = Adafruit_HMC5883_Unified(0);
 }
 
-bool FrSkySportSensorHMC5883L::Setup()
+bool SensorHMC5883L::Setup()
 {
   if (!sensor.begin())
   {
@@ -23,7 +23,7 @@ bool FrSkySportSensorHMC5883L::Setup()
   return true;
 }
 
-void FrSkySportSensorHMC5883L::UpdateSensorData()
+void SensorHMC5883L::UpdateSensorData()
 {
   if (!Ready) {
     return;
@@ -36,6 +36,6 @@ void FrSkySportSensorHMC5883L::UpdateSensorData()
   MagneticZ = event.magnetic.z;
 }
 
-char* FrSkySportSensorHMC5883L::GetName() {
+char* SensorHMC5883L::GetName() {
   return "HMC5883L";
 }

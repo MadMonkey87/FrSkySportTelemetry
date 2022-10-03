@@ -1,10 +1,10 @@
-#include "FrSkySportSensorBMP180.h"
+#include "SensorBMP180.h"
 
-bool FrSkySportSensorBMP180::IsReady(){
+bool SensorBMP180::IsReady(){
   return Ready;
 }
 
-bool FrSkySportSensorBMP180::Setup() {
+bool SensorBMP180::Setup() {
   if (!sensor.begin()) {
     return false;
   }
@@ -15,7 +15,7 @@ bool FrSkySportSensorBMP180::Setup() {
   return true;
 }
 
-void FrSkySportSensorBMP180::UpdateSensorData() {
+void SensorBMP180::UpdateSensorData() {
   if (Ready) {
     return;
   }
@@ -25,6 +25,6 @@ void FrSkySportSensorBMP180::UpdateSensorData() {
   Temperature = sensor.readTemperature();
 }
 
-char* FrSkySportSensorBMP180::GetName() {
+char* SensorBMP180::GetName() {
   return "BMP085/BMP180";
 }

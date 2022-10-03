@@ -1,122 +1,13 @@
-#include "FrSkySportSensorOrientation.h"
+#include "VirtualOrientationSensor.h"
 
-FrSkySportSensorOrientation::FrSkySportSensorOrientation(SensorId id) : FrSkySportSensor(id) {}
-
-uint16_t FrSkySportSensorOrientation::send(FrSkySportSingleWireSerial &serial, uint8_t id, uint32_t now)
-{
-  uint16_t dataId = SENSOR_NO_DATA_ID;
-  if (sensorId == id)
-  {
-    if (now > processingTime)
-    {
-      switch (sensorDataIdx)
-      {
-        case 0:
-          readAndCalculate(); // do this only once for every cycle s.t all the data sent base on the same sensor readings
-          dataId = ORIENTATION_GFORCE_DATA_ID;
-          serial.sendData(dataId, accelerationSensor->GetGForces() * 100);
-          processingTime = now + ORIENTATION_PUSH_PERIOD;
-          break;
-        case 1:
-          dataId = ORIENTATION_PITCH_DATA_ID;
-          serial.sendData(dataId, (kalmanPitchAngle + pitchOffset) * 100);
-          processingTime = now + ORIENTATION_PUSH_PERIOD;
-          break;
-        case 2:
-          dataId = ORIENTATION_ROLL_DATA_ID;
-          serial.sendData(dataId, (kalmanRollAngle + rollOffset) * 100);
-          processingTime = now + ORIENTATION_DATA_PERIOD;
-          break;
-          /*case 0:
-            dataId = ORIENTATION_ACC_X_DATA_ID;
-            serial.sendData(dataId, acceleration.acceleration.x * 100);
-            processingTime = now + ORIENTATION_PUSH_PERIOD;
-            break;
-            case 1:
-            dataId = ORIENTATION_ACC_Y_DATA_ID;
-            serial.sendData(dataId, acceleration.acceleration.y * 100);
-            processingTime = now + ORIENTATION_PUSH_PERIOD;
-            break;
-            case 2:
-            dataId = ORIENTATION_ACC_Z_DATA_ID;
-            serial.sendData(dataId, acceleration.acceleration.z * 100);
-            processingTime = now + ORIENTATION_PUSH_PERIOD;
-            break;
-
-            case 6:
-            dataId = ORIENTATION_PITCHSPEED_DATA_ID;
-            serial.sendData(dataId, gyroXrate * 100);
-            processingTime = now + ORIENTATION_PUSH_PERIOD;
-            break;
-            case 7:
-            dataId = ORIENTATION_ROLLSPEED_DATA_ID;
-            serial.sendData(dataId, gyroYrate * 100);
-            processingTime = now + ORIENTATION_DATA_PERIOD;
-            break;*/
-      }
-    }
-    else
-    {
-      serial.sendEmpty(dataId);
-      dataId = SENSOR_EMPTY_DATA_ID;
-    }
-
-    if (dataId != SENSOR_EMPTY_DATA_ID) { // some data was send, so go to the next senor value
-      sensorDataIdx++;
-      if (sensorDataIdx >= 3/*ORIENTATION_DATA_COUNT*/)
-      {
-        sensorDataIdx = 0;
-      }
-    }
-  }
-  return dataId;
-}
-
-uint16_t FrSkySportSensorOrientation::decodeData(uint8_t id, uint16_t appId, uint32_t data)
-{
-  return SENSOR_NO_DATA_ID;
-}
-
-void FrSkySportSensorOrientation::Setup(HardwareAccelerationSensor* accelerationSensor, HardwareGyroSensor* gyroSensor, HardwareMagneticSensor* magneticSensor =  NULL) {
+void VirtualOrientationSensor::Setup(HardwareAccelerationSensor* accelerationSensor, HardwareGyroSensor* gyroSensor, HardwareMagneticSensor* magneticSensor =  NULL) {
   this->accelerationSensor = accelerationSensor;
   this->gyroSensor = gyroSensor;
   this->magneticSensor = magneticSensor;
-
-  /*readSensorData();
-
-    double roll = getRoll();
-    double pitch = getPitch();
-
-    // assumed that the initial position is the neutral position
-    rollOffset = -roll;
-    pitchOffset = -pitch;
-
-    kalmanX.setAngle(roll);
-    kalmanY.setAngle(pitch);
-    gyroXangle = roll;
-    gyroYangle = pitch;
-    compAngleX = roll;
-    compAngleY = pitch;
-
-    filter.begin(getSampleRate());
-    Serial.print(" - Sensor sample rate: "); Serial.print(getSampleRate()); Serial.println(" Hz");
-    Serial.print(" - Acceleration: "); Serial.print(accX); Serial.print(", "); Serial.print(accY); Serial.print(", "); Serial.print(accZ); Serial.println(" (m/s2)");
-    Serial.print(" - Gyroscope: "); Serial.print(gyroX); Serial.print(", "); Serial.print(gyroY); Serial.print(", "); Serial.print(gyroZ); Serial.println(" (rad/s)");
-    Serial.print(" - Magnetometer: "); Serial.print(magnetometerX); Serial.print(", "); Serial.print(magnetometerY); Serial.print(", "); Serial.print(magnetometerZ); Serial.println(" (uT)");
-    Serial.print(" - Roll (y): "); Serial.print(roll); Serial.println("°");
-    Serial.print(" - Pitch (z): "); Serial.print(pitch); Serial.println("°");
-
-    deltaTime = micros();*/
 }
 
-void FrSkySportSensorOrientation::loop()
-{
-  /*readAndCalculate();
-    Serial.print("x: "); Serial.print(accX); Serial.print(" y: "); Serial.print(accY); Serial.print(" z:"); Serial.print(accZ); Serial.print(" rolly: "); Serial.print(kalAngleY); Serial.print(" pitchx: "); Serial.print(kalAngleX); Serial.print(" g :"); Serial.println(getGForces());
-    Serial.print("roll: "); Serial.print(filter.getRoll());
-    Serial.print("pitch: "); Serial.print(filter.getPitch());
-    Serial.print("yaw: "); Serial.println(filter.getYaw());
-    Serial.println("");*/
+/*void VirtualOrientationSensor::loop()
+  {
 
   //readSensorData();
 
@@ -148,9 +39,9 @@ void FrSkySportSensorOrientation::loop()
   Serial.print("heading: ");
   Serial.print(headingDegrees);
   //Serial.print("° x:"); Serial.print(magnetometerX); Serial.print(" y:"); Serial.print(magnetometerY); Serial.print(" z:"); Serial.println(magnetometerY);
-}
+  }*/
 
-void FrSkySportSensorOrientation::readAndCalculate()
+void VirtualOrientationSensor::ReadAndCalculate()
 {
   if (accelerationSensor && accelerationSensor->IsReady()) {
     accelerationSensor->UpdateSensorData();
@@ -259,7 +150,7 @@ void FrSkySportSensorOrientation::readAndCalculate()
   Serial.println(complementaryRollAngle);
 }
 
-double FrSkySportSensorOrientation::getRollFromAcceleration()
+double VirtualOrientationSensor::getRollFromAcceleration()
 {
   // Source: http://www.freescale.com/files/sensors/doc/app_note/AN3461.pdf eq. 25 and eq. 26
   // atan2 outputs the value of -π to π (radians) - see http://en.wikipedia.org/wiki/Atan2
@@ -271,7 +162,7 @@ double FrSkySportSensorOrientation::getRollFromAcceleration()
 #endif
 }
 
-double FrSkySportSensorOrientation::getPitchFromAcceleration()
+double VirtualOrientationSensor::getPitchFromAcceleration()
 {
   // Source: http://www.freescale.com/files/sensors/doc/app_note/AN3461.pdf eq. 25 and eq. 26
   // atan2 outputs the value of -π to π (radians) - see http://en.wikipedia.org/wiki/Atan2

@@ -1,5 +1,5 @@
-#ifndef _FRSKY_SPORT_SENSOR_MPU6050_H_
-#define _FRSKY_SPORT_SENSOR_MPU6050_H_
+#ifndef _SENSOR_MPU6050_H_
+#define _SENSOR_MPU6050_H_
 
 #include <Adafruit_MPU6050.h>
 
@@ -7,7 +7,7 @@
 #include "HardwareGyroSensor.h"
 #include "HardwareTemperatureSensor.h"
 
-class FrSkySportSensorMPU6050 : public HardwareAccelerationSensor, public HardwareGyroSensor, public HardwareTemperatureSensor
+class SensorMPU6050 : public HardwareAccelerationSensor, public HardwareGyroSensor, public HardwareTemperatureSensor
 {
   public:
     virtual bool Setup();

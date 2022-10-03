@@ -1,18 +1,18 @@
 #include <Adafruit_Sensor.h>
 #include <Wire.h>
 
-#include "FrSkySportSensorLSM303M.h"
+#include "SensorLSM303A.h"
 
-bool FrSkySportSensorLSM303M::IsReady() {
+SensorLSM303A::SensorLSM303A()
+{
+  sensor = Adafruit_LSM303_Accel_Unified(0);
+}
+
+bool SensorLSM303A::IsReady() {
   return Ready;
 }
 
-FrSkySportSensorLSM303M::FrSkySportSensorLSM303M()
-{
-  sensor = Adafruit_LSM303_Mag_Unified(0);
-}
-
-bool FrSkySportSensorLSM303M::Setup()
+bool SensorLSM303A::Setup()
 {
   if (!sensor.begin())
   {
@@ -27,19 +27,19 @@ bool FrSkySportSensorLSM303M::Setup()
   Serial.println(sensorDetails.version);
   Serial.print(" - Max Value: ");
   Serial.print(sensorDetails.max_value);
-  Serial.println(" uT");
+  Serial.println(" m/s^2");
   Serial.print(" - Min Value: ");
   Serial.print(sensorDetails.min_value);
-  Serial.println(" uT");
+  Serial.println(" m/s^2");
   Serial.print(" - Resolution: ");
   Serial.print(sensorDetails.resolution);
-  Serial.println(" uT");
+  Serial.println(" m/s^2");
 
   Ready = true;
   return true;
 }
 
-void FrSkySportSensorLSM303M::UpdateSensorData()
+void SensorLSM303A::UpdateSensorData()
 {
   if (!Ready) {
     return;
@@ -47,11 +47,11 @@ void FrSkySportSensorLSM303M::UpdateSensorData()
 
   sensors_event_t event;
   sensor.getEvent(&event);
-  MagneticX = event.magnetic.x;
-  MagneticY = event.magnetic.y;
-  MagneticZ = event.magnetic.z;
+  AccelerationX = event.acceleration.x;
+  AccelerationY = event.acceleration.y;
+  AccelerationZ = event.acceleration.z;
 }
 
-char* FrSkySportSensorLSM303M::GetName() {
-  return "LSM303M";
+char* SensorLSM303A::GetName() {
+  return "LSM303A";
 }

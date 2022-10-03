@@ -1,14 +1,14 @@
-#include "FrSkySportSensorLSM6DS3.h"
+#include "SensorLSM6DS3.h"
 #include <Wire.h>
 #include <Arduino_LSM6DS3.h>
 
 LSM6DS3Class sensor(Wire, 0x6B);
 
-bool FrSkySportSensorLSM6DS3::IsReady() {
+bool SensorLSM6DS3::IsReady() {
   return Ready;
 }
 
-bool FrSkySportSensorLSM6DS3::Setup()
+bool SensorLSM6DS3::Setup()
 {
   if (!sensor.begin())
   {
@@ -32,7 +32,7 @@ bool FrSkySportSensorLSM6DS3::Setup()
   return true;
 }
 
-void FrSkySportSensorLSM6DS3::UpdateSensorData()
+void SensorLSM6DS3::UpdateSensorData()
 {
   if (!Ready) {
     return;
@@ -47,6 +47,6 @@ void FrSkySportSensorLSM6DS3::UpdateSensorData()
   GyroX = x; GyroY = y; GyroZ = z;
 }
 
-char* FrSkySportSensorLSM6DS3::GetName() {
+char* SensorLSM6DS3::GetName() {
   return "LSM6DS3";
 }

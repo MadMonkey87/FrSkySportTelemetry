@@ -1,9 +1,9 @@
-#ifndef _FRSKY_SPORT_SENSOR_TEENSY_ONBOARD_H_
-#define _FRSKY_SPORT_SENSOR_TEENSY_ONBOARD_H_
+#ifndef _SENSOR_TEENSY_ONBOARD_H_
+#define _SENSOR_TEENSY_ONBOARD_H_
 
 #include "HardwareTemperatureSensor.h"
 
-class FrSkySportSensorTeensyOnBoard : public HardwareTemperatureSensor
+class SensorTeensyOnBoard : public HardwareTemperatureSensor
 {
   public:
     bool virtual Setup();

@@ -14,15 +14,15 @@
 
 #include "I2CScanner.h"
 #include "SBusSensor.h"
-#include "FrSkySportSensorBMP180.h"
-#include "FrSkySportSensorBMP280.h"
-#include "FrSkySportSensorLSM303M.h"
-#include "FrSkySportSensorLSM303A.h"
-#include "FrSkySportSensorMPU6050.h"
-#include "FrSkySportSensorLSM6DS3.h"
-#include "FrSkySportSensorHMC5883L.h"
-#include "FrSkySportSensorTeensyOnBoard.h"
-#include "FrSkySportSensorOrientation.h"
+#include "SensorBMP180.h"
+#include "SensorBMP280.h"
+#include "SensorLSM303M.h"
+#include "SensorLSM303A.h"
+#include "SensorMPU6050.h"
+#include "SensorLSM6DS3.h"
+#include "SensorHMC5883L.h"
+#include "SensorTeensyOnBoard.h"
+#include "VirtualOrientationSensor.h"
 #include "FrSkySportSingleWireSerial.h"
 #include "FrSkySportTelemetry.h"
 #include "Plotter.h"
@@ -34,15 +34,15 @@
 
 I2CScanner i2cScanner;
 SBusSensor sbus;
-FrSkySportSensorBMP180 bmp180;
-FrSkySportSensorBMP280 bmp280;
-FrSkySportSensorLSM303M lsm303m;
-FrSkySportSensorLSM303A lsm303a;
-FrSkySportSensorMPU6050 mpu6050;
-FrSkySportSensorLSM6DS3 lsm6ds3;
-FrSkySportSensorHMC5883L hmc5883l;
-FrSkySportSensorTeensyOnBoard teensyOnBoard;
-FrSkySportSensorOrientation orientationSensor;
+SensorBMP180 bmp180;
+SensorBMP280 bmp280;
+SensorLSM303M lsm303m;
+SensorLSM303A lsm303a;
+SensorMPU6050 mpu6050;
+SensorLSM6DS3 lsm6ds3;
+SensorHMC5883L hmc5883l;
+SensorTeensyOnBoard teensyOnBoard;
+VirtualOrientationSensor virtualOrientationSensor;
 Plotter plotter;
 #ifdef POLLING_ENABLED
 #include "FrSkySportPollingDynamic.h"
@@ -120,7 +120,7 @@ void setup()
   Serial.print("Initialize Smart Port...\n");
   // Configure the telemetry serial port and sensors (remember to use & to specify a pointer to sensor)
 #if defined(TEENSY_HW)
-  telemetry.begin(FrSkySportSingleWireSerial::SERIAL_3, &orientationSensor);
+  //telemetry.begin(FrSkySportSingleWireSerial::SERIAL_3, &orientationSensor);
 #else
   telemetry.begin(FrSkySportSingleWireSerial::SOFT_SERIAL_PIN_12, &orientationSensor);
 #endif
@@ -186,7 +186,7 @@ void setup()
   HardwareAccelerationSensor *accelerationSensor = &mpu6050;
   HardwareGyroSensor *gyroSensor = &mpu6050;
   HardwareMagneticSensor *magneticSensor = &lsm303m;
-  orientationSensor.Setup(accelerationSensor, gyroSensor, magneticSensor);
+  virtualOrientationSensor.Setup(accelerationSensor, gyroSensor, magneticSensor);
 
   plotter.SetTemperatureSensors(temperatureSensors, sizeof(temperatureSensors) / sizeof(HardwareTemperatureSensor*));
   plotter.SetAirPressureSensors(airpressureSensors, sizeof(airpressureSensors) / sizeof(HardwareAirPressureSensor*));
@@ -203,11 +203,6 @@ bool blink = false;
 
 void loop()
 {
-
-
-
-
-
   if (blink) {
     blink = false;
     digitalWrite(13, HIGH);
@@ -255,7 +250,7 @@ void loop()
   teensyOnBoard.UpdateSensorData();
 
 
-  orientationSensor.readAndCalculate();
+  virtualOrientationSensor.ReadAndCalculate();
 
 
 

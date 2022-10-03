@@ -1,11 +1,11 @@
-#include "FrSkySportSensorBMP280.h"
+#include "SensorBMP280.h"
 #include <Wire.h>
 
-bool FrSkySportSensorBMP280::IsReady(){
+bool SensorBMP280::IsReady(){
   return Ready;
 }
 
-bool FrSkySportSensorBMP280::Setup() {
+bool SensorBMP280::Setup() {
   if (!sensor.begin(0x76)) {
     return false;
   }
@@ -23,7 +23,7 @@ bool FrSkySportSensorBMP280::Setup() {
   return true;
 }
 
-void FrSkySportSensorBMP280::UpdateSensorData() {
+void SensorBMP280::UpdateSensorData() {
   if (!Ready) {
     return;
   }
@@ -33,6 +33,6 @@ void FrSkySportSensorBMP280::UpdateSensorData() {
   Temperature = sensor.readTemperature();
 }
 
-char* FrSkySportSensorBMP280::GetName() {
+char* SensorBMP280::GetName() {
   return "BMP280";
 }

@@ -1,14 +1,14 @@
-#ifndef _FRSKY_SPORT_SENSOR_LSM303M_H_
-#define _FRSKY_SPORT_SENSOR_LSM303M_H_
+#ifndef _SENSOR_LSM303M_H_
+#define _SENSOR_LSM303M_H_
 
 #include <Adafruit_LSM303_U.h>
 
 #include "HardwareMagneticSensor.h"
 
-class FrSkySportSensorLSM303M : public HardwareMagneticSensor
+class SensorLSM303M : public HardwareMagneticSensor
 {
   public:
-    FrSkySportSensorLSM303M();
+    SensorLSM303M();
     virtual bool Setup();
     virtual void UpdateSensorData();
     virtual char* GetName();

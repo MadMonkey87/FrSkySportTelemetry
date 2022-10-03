@@ -113,6 +113,8 @@ void setup()
 
   i2cScanner.scan();
 
+  plotter.Setup();
+
   sbus.Setup();
 
   Serial.print("Initialize Smart Port...\n");

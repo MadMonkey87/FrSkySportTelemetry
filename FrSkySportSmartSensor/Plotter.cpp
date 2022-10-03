@@ -1,6 +1,73 @@
 #include "Plotter.h"
 #include <Wire.h>
 
+#include <SD.h>
+#include <SPI.h>
+
+Sd2Card card;
+SdVolume volume;
+SdFile root;
+
+// change this to match your SD shield or module;
+// Arduino Ethernet shield: pin 4
+// Adafruit SD shields and modules: pin 10
+// Sparkfun SD shield: pin 8
+// Teensy audio board: pin 10
+// Teensy 3.5 & 3.6 & 4.1 on-board: BUILTIN_SDCARD
+// Wiz820+SD board: pin 4
+// Teensy 2.0: pin 0
+// Teensy++ 2.0: pin 20
+const int chipSelect = 10;
+
+bool sdCardReady = false;
+
+void Plotter::Setup() {
+  Serial.println("Initialiting plotter persistence...");
+
+
+  if (!card.init(SPI_HALF_SPEED, chipSelect)) {
+    Serial.println(" - No SD card was found (check wiring and chipSelect mode)");
+    Serial.println("failed!");
+    return;
+  }
+
+  if (!volume.init(card)) {
+    Serial.println("Could not find FAT16/FAT32 partition.\nMake sure you've formatted the card");
+    Serial.println("failed!");
+    return;
+  }
+
+  Serial.print(" - sd card type: ");
+  switch (card.type()) {
+    case SD_CARD_TYPE_SD1:
+      Serial.println("SD1");
+      break;
+    case SD_CARD_TYPE_SD2:
+      Serial.println("SD2");
+      break;
+    case SD_CARD_TYPE_SDHC:
+      Serial.println("SDHC");
+      break;
+    default:
+      Serial.println("Unknown");
+  }
+
+  // print the type and size of the first FAT-type volume
+  uint32_t volumesize;
+  Serial.print(" - volume type is FAT");
+  Serial.println(volume.fatType(), DEC);
+  Serial.println();
+
+  volumesize = volume.blocksPerCluster();    // clusters are collections of blocks
+  volumesize *= volume.clusterCount();       // we'll have a lot of clusters
+  Serial.print(" - volume size (Kbytes): ");
+  volumesize /= 2;
+  Serial.println(volumesize);
+
+  sdCardReady = true;
+  Serial.println("successfull!");
+}
+
 void Plotter::SetTemperatureSensors(HardwareTemperatureSensor *temperatureSensors[], unsigned int count) {
   this->temperatureSensors = temperatureSensors;
   this->temperatureSensorsCount = count;
@@ -26,7 +93,11 @@ void Plotter::SetMagneticSensors(HardwareMagneticSensor *magneticSensors[], unsi
   this->magneticSensorsCount = count;
 }
 
+
+
 void Plotter::PrintDetails() {
+
+  Serial.print("Persist: "); Serial.println(sdCardReady);
 
   Serial.println("Temperature Sensors: ");
   for (unsigned int i = 0; i < temperatureSensorsCount; i++) {

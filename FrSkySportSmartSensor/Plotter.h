@@ -10,6 +10,7 @@
 class Plotter
 {
   public:
+    void Setup();
     void SetTemperatureSensors(HardwareTemperatureSensor *temperatureSensors[], unsigned int count);
     void SetAirPressureSensors(HardwareAirPressureSensor *airPressureSensors[], unsigned int count);
     void SetAccelerationSensors(HardwareAccelerationSensor *accelerationSensors[], unsigned int count);

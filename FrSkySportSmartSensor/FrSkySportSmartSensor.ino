@@ -23,6 +23,7 @@
 #include "SensorHMC5883L.h"
 #include "SensorTeensyOnBoard.h"
 #include "VirtualOrientationSensor.h"
+#include "FrSkySportSensorAltitude.h"
 #include "FrSkySportSingleWireSerial.h"
 #include "FrSkySportTelemetry.h"
 #include "Plotter.h"
@@ -43,6 +44,7 @@ SensorLSM6DS3 lsm6ds3;
 SensorHMC5883L hmc5883l;
 SensorTeensyOnBoard teensyOnBoard;
 VirtualOrientationSensor virtualOrientationSensor;
+FrSkySportSensorAltitude frskyAltitudeSensor;
 Plotter plotter;
 #ifdef POLLING_ENABLED
 #include "FrSkySportPollingDynamic.h"
@@ -117,15 +119,6 @@ void setup()
 
   sbus.Setup();
 
-  Serial.print("Initialize Smart Port...\n");
-  // Configure the telemetry serial port and sensors (remember to use & to specify a pointer to sensor)
-#if defined(TEENSY_HW)
-  //telemetry.begin(FrSkySportSingleWireSerial::SERIAL_3, &orientationSensor);
-#else
-  telemetry.begin(FrSkySportSingleWireSerial::SOFT_SERIAL_PIN_12, &orientationSensor);
-#endif
-  Serial.println("done!\n");
-
   void* hardwareSensors[] = {
     &bmp180,
     &bmp280,
@@ -194,6 +187,17 @@ void setup()
   plotter.SetGyroSensors(gyroSensors, sizeof(gyroSensors) / sizeof(HardwareGyroSensor*));
   plotter.SetMagneticSensors(magneticSensors, sizeof(magneticSensors) / sizeof(HardwareMagneticSensor*));
   plotter.PrintDetails();
+
+  frskyAltitudeSensor.Setup(&bmp280);
+
+  Serial.print("Initialize Smart Port...\n");
+  // Configure the telemetry serial port and sensors (remember to use & to specify a pointer to sensor)
+#if defined(TEENSY_HW)
+  telemetry.begin(FrSkySportSingleWireSerial::SERIAL_3, &frskyAltitudeSensor);
+#else
+  telemetry.begin(FrSkySportSingleWireSerial::SOFT_SERIAL_PIN_12, &frskyAltitudeSensor);
+#endif
+  Serial.println("done!\n");
 
   Serial.println();
   Serial.println("Setup completed! Start operating...\n");

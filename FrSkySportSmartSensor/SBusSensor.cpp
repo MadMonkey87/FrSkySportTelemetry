@@ -1,4 +1,4 @@
-#include "SBusListener.h"
+#include "SBusSensor.h"
 #include "sbus.h"
 
 /* SbusRx object on Serial1 */
@@ -6,13 +6,8 @@ bfs::SbusRx sbus_rx(&Serial1);
 /* Array for storing SBUS data */
 std::array<int16_t, bfs::SbusRx::NUM_CH()> sbus_data;
 
-SBusListener::SBusListener()
+bool SBusSensor::Setup()
 {
-}
-
-void SBusListener::setup()
-{
-  Serial.println("Initialize SBus...");
   sbus_rx.Begin();
 
   for (int i = 0; i < 100; i++) {
@@ -30,17 +25,18 @@ void SBusListener::setup()
       Serial.println(sbus_rx.lost_frame());
       Serial.print(" - failsafe: ");
       Serial.println(sbus_rx.failsafe());
-      break;
+      
+      Ready = true;
+      return  true;
     } else if (i == 99) {
       Serial.println(" - not connected!");
     }
     delay(10);
   }
-
-  Serial.println("done!\n");
+  return false;
 }
 
-void SBusListener::update()
+void SBusSensor::UpdateSensorData()
 {
   uint32_t now = millis();
   if (now >= sbusTime)
@@ -61,4 +57,12 @@ void SBusListener::update()
       sbusTime = now + SBUS_DATA_PERIOD;
     }
   }
+}
+
+char* SBusSensor::GetName() {
+  return "SBus";
+}
+
+bool SBusSensor::IsReady() {
+  return Ready;
 }

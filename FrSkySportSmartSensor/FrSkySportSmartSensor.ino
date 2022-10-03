@@ -13,7 +13,7 @@
 //#define POLLING_ENABLED
 
 #include "I2CScanner.h"
-#include "SBusListener.h"
+#include "SBusSensor.h"
 #include "FrSkySportSensorBMP180.h"
 #include "FrSkySportSensorBMP280.h"
 #include "FrSkySportSensorLSM303M.h"
@@ -33,7 +33,7 @@
 #endif
 
 I2CScanner i2cScanner;
-SBusListener sbusListener;
+SBusSensor sbus;
 FrSkySportSensorBMP180 bmp180;
 FrSkySportSensorBMP280 bmp280;
 FrSkySportSensorLSM303M lsm303m;
@@ -113,7 +113,7 @@ void setup()
 
   i2cScanner.scan();
 
-  sbusListener.setup();
+  sbus.Setup();
 
   Serial.print("Initialize Smart Port...\n");
   // Configure the telemetry serial port and sensors (remember to use & to specify a pointer to sensor)
@@ -242,7 +242,7 @@ void loop()
 
 
 
-
+  sbus.UpdateSensorData();
   bmp180.UpdateSensorData();
   bmp280.UpdateSensorData();
   lsm303m.UpdateSensorData();

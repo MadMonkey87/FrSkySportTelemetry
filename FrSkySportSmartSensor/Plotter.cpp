@@ -1,8 +1,7 @@
 #include "Plotter.h"
 #include <Wire.h>
 
-#include <SD.h>
-#include <SPI.h>
+#include <TimeLib.h>
 
 Sd2Card card;
 SdVolume volume;
@@ -25,14 +24,17 @@ bool sdCardReady = false;
 void Plotter::Setup() {
   Serial.println("Initialiting plotter persistence...");
 
+  Serial.print(" - date: "); printDigits(day()); Serial.print("."); printDigits(month()); Serial.print("."); Serial.println(year());
+  Serial.print(" - time: "); printDigits(hour()); Serial.print(":"); printDigits(minute()); Serial.print(":"); printDigits(second()); Serial.println();
+
   if (!card.init(SPI_HALF_SPEED, chipSelect)) {
-    Serial.println(" - No SD card was found (check wiring and chipSelect mode)");
+    Serial.println(" - no SD card was found (check wiring and chipSelect mode)");
     Serial.println("failed!");
     return;
   }
 
   if (!volume.init(card)) {
-    Serial.println(" - Could not find FAT16/FAT32 partition. Make sure you've formatted the card");
+    Serial.println(" - could not find FAT16/FAT32 partition. Make sure you've formatted the card");
     Serial.println("failed!");
     return;
   }
@@ -71,10 +73,15 @@ void Plotter::Setup() {
       Serial.print(" - log file: ");
       Serial.println(filename.c_str());
 
+      logFile.print("timestamp;");
+
       for (unsigned int i = 0; i < temperatureSensorsCount; i++) {
         if (temperatureSensors[i]->IsReady()) {
           logFile.print(temperatureSensors[i]->GetName());
           logFile.print(" temperature (C°);");
+        } else {
+          Serial.print(temperatureSensors[i]->GetName());
+          Serial.println("not ready");
         }
       }
       for (unsigned int i = 0; i < airPressureSensorsCount; i++) {
@@ -140,8 +147,11 @@ void Plotter::Log() {
   uint32_t now = millis();
 
   if (now > logTime) {
-    logTime = now + 1000;
+    logTime = now + 500;
     File logFile = SD.open(filename.c_str(), FILE_WRITE);
+
+    logDigits(day(), logFile); logFile.print("."); logDigits(month(), logFile); logFile.print("."); logFile.print(year()); logFile.print(" ");
+    logDigits(hour(), logFile); logFile.print(":"); logDigits(minute(), logFile); logFile.print(":"); logDigits(second(), logFile); logFile.print(";");
 
     for (unsigned int i = 0; i < temperatureSensorsCount; i++) {
       if (temperatureSensors[i]->IsReady()) {
@@ -467,4 +477,18 @@ void Plotter::PlotMagneticValues() {
     }
   }
   Serial.println();
+}
+
+void Plotter::printDigits(int digits) {
+  Serial.print(":");
+  if (digits < 10)
+    Serial.print('0');
+  Serial.print(digits);
+}
+
+void Plotter::logDigits(int digits, File logFile) {
+  logFile.print(":");
+  if (digits < 10)
+    logFile.print('0');
+  logFile.print(digits);
 }

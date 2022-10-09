@@ -8,6 +8,9 @@
 #include "HardwareAirPressureSensor.h"
 #include "Arduino.h"
 
+#include <SD.h>
+#include <SPI.h>
+
 class Plotter
 {
   public:
@@ -44,6 +47,9 @@ class Plotter
     unsigned int magneticSensorsCount;
 
     uint32_t logTime;
+
+    void printDigits(int digits);
+    void logDigits(int digits, File logFile);
 };
 
 #endif

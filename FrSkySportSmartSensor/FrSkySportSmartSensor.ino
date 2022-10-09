@@ -116,9 +116,6 @@ void setup()
   i2cScanner.scan();
   Serial.println("");
 
-  plotter.Setup();
-  Serial.println("");
-
   Serial.println("Initialize SBUS...");
   sbus.Setup();
   Serial.println("");
@@ -185,6 +182,9 @@ void setup()
   HardwareMagneticSensor *magneticSensor = &lsm303m;
   virtualOrientationSensor.Setup(accelerationSensor, gyroSensor, magneticSensor);
 
+  plotter.Setup();
+  Serial.println("");
+  
   plotter.SetTemperatureSensors(temperatureSensors, sizeof(temperatureSensors) / sizeof(HardwareTemperatureSensor*));
   plotter.SetAirPressureSensors(airpressureSensors, sizeof(airpressureSensors) / sizeof(HardwareAirPressureSensor*));
   plotter.SetAccelerationSensors(accelerationSensors, sizeof(accelerationSensors) / sizeof(HardwareAccelerationSensor*));
@@ -256,6 +256,8 @@ void loop()
   hmc5883l.UpdateSensorData();
   lsm6ds3.UpdateSensorData();
   teensyOnBoard.UpdateSensorData();
+
+  plotter.Log();
 
 
   //virtualOrientationSensor.ReadAndCalculate();

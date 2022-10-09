@@ -7,6 +7,7 @@
 Sd2Card card;
 SdVolume volume;
 SdFile root;
+String filename;
 
 // change this to match your SD shield or module;
 // Arduino Ethernet shield: pin 4
@@ -31,7 +32,7 @@ void Plotter::Setup() {
   }
 
   if (!volume.init(card)) {
-    Serial.println(" - Could not find FAT16/FAT32 partition.\nMake sure you've formatted the card");
+    Serial.println(" - Could not find FAT16/FAT32 partition. Make sure you've formatted the card");
     Serial.println("failed!");
     return;
   }
@@ -62,36 +63,166 @@ void Plotter::Setup() {
   volumesize /= 2;
   Serial.println(volumesize);
 
+  int i = 1;
+  while (true) {
+    filename = String("log_" + String(i, DEC) + ".csv");
+    if (!SD.exists(filename.c_str())) {
+      File logFile = SD.open(filename.c_str(), FILE_WRITE);
+      Serial.print(" - log file: ");
+      Serial.println(filename.c_str());
+
+      for (unsigned int i = 0; i < temperatureSensorsCount; i++) {
+        if (temperatureSensors[i]->IsReady()) {
+          logFile.print(temperatureSensors[i]->GetName());
+          logFile.print(" temperature (C°);");
+        }
+      }
+      for (unsigned int i = 0; i < airPressureSensorsCount; i++) {
+        if (airPressureSensors[i]->IsReady()) {
+          logFile.print(airPressureSensors[i]->GetName());
+          logFile.print(" air pressure (hPa);");
+          logFile.print(airPressureSensors[i]->GetName());
+          logFile.print(" relative altitude (m);");
+        }
+      }
+      for (unsigned int i = 0; i < accelerationSensorsCount; i++) {
+        if (accelerationSensors[i]->IsReady()) {
+          logFile.print(accelerationSensors[i]->GetName());
+          logFile.print("acceleration X;");
+          logFile.print(accelerationSensors[i]->GetName());
+          logFile.print("acceleration Y;");
+          logFile.print(accelerationSensors[i]->GetName());
+          logFile.print(" acceleration Z;");
+          logFile.print(accelerationSensors[i]->GetName());
+          logFile.print(" Gforce (g);");
+        }
+      }
+
+      for (unsigned int i = 0; i < gyroSensorsCount; i++) {
+        if (gyroSensors[i]->IsReady()) {
+          logFile.print(gyroSensors[i]->GetName());
+          logFile.print("gyro X;");
+          logFile.print(gyroSensors[i]->GetName());
+          logFile.print(" gyro Y;");
+          logFile.print(gyroSensors[i]->GetName());
+          logFile.print(" gyro Z;");
+        }
+      }
+
+      for (unsigned int i = 0; i < magneticSensorsCount; i++) {
+        if (magneticSensors[i]->IsReady()) {
+          logFile.print(magneticSensors[i]->GetName());
+          logFile.print(" magnetic X;");
+          logFile.print(magneticSensors[i]->GetName());
+          logFile.print(" magnetic Y;");
+          logFile.print(magneticSensors[i]->GetName());
+          logFile.print(" magnetic Z;");
+        }
+      }
+
+      logFile.println();
+      logFile.close();
+
+      break;
+    }
+    i++;
+  }
+
   sdCardReady = true;
   Serial.println("successfull!");
 }
 
-void Plotter::SetTemperatureSensors(HardwareTemperatureSensor *temperatureSensors[], unsigned int count) {
+void Plotter::Log() {
+  if (!sdCardReady) {
+    return;
+  }
+
+  uint32_t now = millis();
+
+  if (now > logTime) {
+    logTime = now + 1000;
+    File logFile = SD.open(filename.c_str(), FILE_WRITE);
+
+    for (unsigned int i = 0; i < temperatureSensorsCount; i++) {
+      if (temperatureSensors[i]->IsReady()) {
+        logFile.print(temperatureSensors[i]->Temperature);
+        logFile.print(";");
+      }
+    }
+
+    for (unsigned int i = 0; i < airPressureSensorsCount; i++) {
+      if (airPressureSensors[i]->IsReady()) {
+        logFile.print(airPressureSensors[i]->AirPressure);
+        logFile.print(";");
+        logFile.print(airPressureSensors[i]->RelativeAltitude);
+        logFile.print(";");
+      }
+    }
+
+    for (unsigned int i = 0; i < accelerationSensorsCount; i++) {
+      if (accelerationSensors[i]->IsReady()) {
+        logFile.print(accelerationSensors[i]->AccelerationX);
+        logFile.print(";");
+        logFile.print(accelerationSensors[i]->AccelerationY);
+        logFile.print(";");
+        logFile.print(accelerationSensors[i]->AccelerationZ);
+        logFile.print(";");
+        logFile.print(accelerationSensors[i]->GetGForces());
+        logFile.print(";");
+      }
+    }
+
+    for (unsigned int i = 0; i < gyroSensorsCount; i++) {
+      if (gyroSensors[i]->IsReady()) {
+        logFile.print(gyroSensors[i]->GyroX);
+        logFile.print(";");
+        logFile.print(gyroSensors[i]->GyroY);
+        logFile.print(";");
+        logFile.print(gyroSensors[i]->GyroZ);
+        logFile.print(";");
+      }
+    }
+
+    for (unsigned int i = 0; i < magneticSensorsCount; i++) {
+      if (magneticSensors[i]->IsReady()) {
+        logFile.print(magneticSensors[i]->MagneticX);
+        logFile.print(";");
+        logFile.print(magneticSensors[i]->MagneticY);
+        logFile.print(";");
+        logFile.print(magneticSensors[i]->MagneticZ);
+        logFile.print(";");
+      }
+    }
+
+    logFile.println();
+    logFile.close();
+  }
+}
+
+void Plotter::SetTemperatureSensors(HardwareTemperatureSensor * temperatureSensors[], unsigned int count) {
   this->temperatureSensors = temperatureSensors;
   this->temperatureSensorsCount = count;
 }
 
-void Plotter::SetAirPressureSensors(HardwareAirPressureSensor *airPressureSensors[], unsigned int count) {
+void Plotter::SetAirPressureSensors(HardwareAirPressureSensor * airPressureSensors[], unsigned int count) {
   this->airPressureSensors = airPressureSensors;
   this->airPressureSensorsCount = count;
 }
 
-void Plotter::SetAccelerationSensors(HardwareAccelerationSensor *accelerationSensors[], unsigned int count) {
+void Plotter::SetAccelerationSensors(HardwareAccelerationSensor * accelerationSensors[], unsigned int count) {
   this->accelerationSensors = accelerationSensors;
   this->accelerationSensorsCount = count;
 }
 
-void Plotter::SetGyroSensors(HardwareGyroSensor *gyroSensors[], unsigned int count) {
+void Plotter::SetGyroSensors(HardwareGyroSensor * gyroSensors[], unsigned int count) {
   this->gyroSensors = gyroSensors;
   this->gyroSensorsCount = count;
 }
 
-void Plotter::SetMagneticSensors(HardwareMagneticSensor *magneticSensors[], unsigned int count) {
+void Plotter::SetMagneticSensors(HardwareMagneticSensor * magneticSensors[], unsigned int count) {
   this->magneticSensors = magneticSensors;
   this->magneticSensorsCount = count;
 }
-
-
 
 void Plotter::PrintDetails() {
 

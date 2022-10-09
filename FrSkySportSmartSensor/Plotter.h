@@ -6,6 +6,7 @@
 #include "HardwareMagneticSensor.h"
 #include "HardwareTemperatureSensor.h"
 #include "HardwareAirPressureSensor.h"
+#include "Arduino.h"
 
 class Plotter
 {
@@ -24,6 +25,7 @@ class Plotter
     void PlotGForceValues();
     void PlotGyroValues();
     void PlotMagneticValues();
+    void Log();
 
   private:
     HardwareTemperatureSensor** temperatureSensors;
@@ -40,6 +42,8 @@ class Plotter
 
     HardwareMagneticSensor** magneticSensors;
     unsigned int magneticSensorsCount;
+
+    uint32_t logTime;
 };
 
 #endif

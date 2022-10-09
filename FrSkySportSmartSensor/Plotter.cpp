@@ -72,6 +72,33 @@ void Plotter::Setup() {
       File logFile = SD.open(filename.c_str(), FILE_WRITE);
       Serial.print(" - log file: ");
       Serial.println(filename.c_str());
+      logFile.close();
+
+      break;
+    }
+    i++;
+  }
+
+  sdCardReady = true;
+  Serial.println("successfull!");
+}
+
+bool headersWritten = false;
+
+void Plotter::Log() {
+  if (!sdCardReady) {
+    return;
+  }
+
+  uint32_t now = millis();
+
+  if (now > logTime) {
+    logTime = now + 500;
+    File logFile = SD.open(filename.c_str(), FILE_WRITE);
+
+    if (!headersWritten) {
+
+      headersWritten = true;
 
       logFile.print("timestamp;");
 
@@ -127,81 +154,62 @@ void Plotter::Setup() {
         }
       }
 
-      logFile.println();
-      logFile.close();
+    } else {
 
-      break;
-    }
-    i++;
-  }
+      logDigits(day(), logFile); logFile.print("."); logDigits(month(), logFile); logFile.print("."); logFile.print(year()); logFile.print(" ");
+      logDigits(hour(), logFile); logFile.print(":"); logDigits(minute(), logFile); logFile.print(":"); logDigits(second(), logFile); logFile.print(";");
 
-  sdCardReady = true;
-  Serial.println("successfull!");
-}
-
-void Plotter::Log() {
-  if (!sdCardReady) {
-    return;
-  }
-
-  uint32_t now = millis();
-
-  if (now > logTime) {
-    logTime = now + 500;
-    File logFile = SD.open(filename.c_str(), FILE_WRITE);
-
-    logDigits(day(), logFile); logFile.print("."); logDigits(month(), logFile); logFile.print("."); logFile.print(year()); logFile.print(" ");
-    logDigits(hour(), logFile); logFile.print(":"); logDigits(minute(), logFile); logFile.print(":"); logDigits(second(), logFile); logFile.print(";");
-
-    for (unsigned int i = 0; i < temperatureSensorsCount; i++) {
-      if (temperatureSensors[i]->IsReady()) {
-        logFile.print(temperatureSensors[i]->Temperature);
-        logFile.print(";");
+      for (unsigned int i = 0; i < temperatureSensorsCount; i++) {
+        if (temperatureSensors[i]->IsReady()) {
+          logFile.print(temperatureSensors[i]->Temperature);
+          logFile.print(";");
+        }
       }
-    }
 
-    for (unsigned int i = 0; i < airPressureSensorsCount; i++) {
-      if (airPressureSensors[i]->IsReady()) {
-        logFile.print(airPressureSensors[i]->AirPressure);
-        logFile.print(";");
-        logFile.print(airPressureSensors[i]->RelativeAltitude);
-        logFile.print(";");
+      for (unsigned int i = 0; i < airPressureSensorsCount; i++) {
+        if (airPressureSensors[i]->IsReady()) {
+          logFile.print(airPressureSensors[i]->AirPressure);
+          logFile.print(";");
+          logFile.print(airPressureSensors[i]->RelativeAltitude);
+          logFile.print(";");
+        }
       }
-    }
 
-    for (unsigned int i = 0; i < accelerationSensorsCount; i++) {
-      if (accelerationSensors[i]->IsReady()) {
-        logFile.print(accelerationSensors[i]->AccelerationX);
-        logFile.print(";");
-        logFile.print(accelerationSensors[i]->AccelerationY);
-        logFile.print(";");
-        logFile.print(accelerationSensors[i]->AccelerationZ);
-        logFile.print(";");
-        logFile.print(accelerationSensors[i]->GetGForces());
-        logFile.print(";");
+      for (unsigned int i = 0; i < accelerationSensorsCount; i++) {
+        if (accelerationSensors[i]->IsReady()) {
+          logFile.print(accelerationSensors[i]->AccelerationX);
+          logFile.print(";");
+          logFile.print(accelerationSensors[i]->AccelerationY);
+          logFile.print(";");
+          logFile.print(accelerationSensors[i]->AccelerationZ);
+          logFile.print(";");
+          logFile.print(accelerationSensors[i]->GetGForces());
+          logFile.print(";");
+        }
       }
-    }
 
-    for (unsigned int i = 0; i < gyroSensorsCount; i++) {
-      if (gyroSensors[i]->IsReady()) {
-        logFile.print(gyroSensors[i]->GyroX);
-        logFile.print(";");
-        logFile.print(gyroSensors[i]->GyroY);
-        logFile.print(";");
-        logFile.print(gyroSensors[i]->GyroZ);
-        logFile.print(";");
+      for (unsigned int i = 0; i < gyroSensorsCount; i++) {
+        if (gyroSensors[i]->IsReady()) {
+          logFile.print(gyroSensors[i]->GyroX);
+          logFile.print(";");
+          logFile.print(gyroSensors[i]->GyroY);
+          logFile.print(";");
+          logFile.print(gyroSensors[i]->GyroZ);
+          logFile.print(";");
+        }
       }
-    }
 
-    for (unsigned int i = 0; i < magneticSensorsCount; i++) {
-      if (magneticSensors[i]->IsReady()) {
-        logFile.print(magneticSensors[i]->MagneticX);
-        logFile.print(";");
-        logFile.print(magneticSensors[i]->MagneticY);
-        logFile.print(";");
-        logFile.print(magneticSensors[i]->MagneticZ);
-        logFile.print(";");
+      for (unsigned int i = 0; i < magneticSensorsCount; i++) {
+        if (magneticSensors[i]->IsReady()) {
+          logFile.print(magneticSensors[i]->MagneticX);
+          logFile.print(";");
+          logFile.print(magneticSensors[i]->MagneticY);
+          logFile.print(";");
+          logFile.print(magneticSensors[i]->MagneticZ);
+          logFile.print(";");
+        }
       }
+
     }
 
     logFile.println();
@@ -237,9 +245,9 @@ void Plotter::SetMagneticSensors(HardwareMagneticSensor * magneticSensors[], uns
 void Plotter::PrintDetails() {
 
   if (sdCardReady) {
-    Serial.print("Persist: YES");
+    Serial.println("Persist: YES");
   } else {
-    Serial.print("Persist: NO");
+    Serial.println("Persist: NO");
   }
 
   Serial.println("Temperature Sensors: ");
@@ -480,14 +488,12 @@ void Plotter::PlotMagneticValues() {
 }
 
 void Plotter::printDigits(int digits) {
-  Serial.print(":");
   if (digits < 10)
     Serial.print('0');
   Serial.print(digits);
 }
 
 void Plotter::logDigits(int digits, File logFile) {
-  logFile.print(":");
   if (digits < 10)
     logFile.print('0');
   logFile.print(digits);

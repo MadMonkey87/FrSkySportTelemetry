@@ -8,6 +8,8 @@ std::array<int16_t, bfs::SbusRx::NUM_CH()> sbus_data;
 
 bool SBusSensor::Setup()
 {
+  Serial.println("Initialize SBUS...");
+
   sbus_rx.Begin();
 
   for (int i = 0; i < 100; i++) {
@@ -25,7 +27,7 @@ bool SBusSensor::Setup()
       Serial.println(sbus_rx.lost_frame());
       Serial.print(" - failsafe: ");
       Serial.println(sbus_rx.failsafe());
-      
+
       Ready = true;
       return  true;
     } else if (i == 99) {
